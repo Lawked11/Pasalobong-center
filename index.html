@@ -21,7 +21,16 @@
           <label for="login-email">Email</label>
           <input type="email" id="login-email" required placeholder="you@example.com" autocomplete="username">
           <label for="login-password">Password</label>
-          <input type="password" id="login-password" required placeholder="Password" autocomplete="current-password">
+          <div class="input-eye-row">
+            <input type="password" id="login-password" required placeholder="Password" autocomplete="current-password">
+            <span class="eye-icon" id="login-password-eye" tabindex="0" aria-label="Show password" role="button">
+              <!-- Eye open icon SVG -->
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </span>
+          </div>
           <button type="submit" class="btn-primary">Login</button>
           <p class="auth-switch">Don't have an account? <a href="#" id="showSignup">Sign Up</a></p>
         </form>
@@ -31,9 +40,25 @@
           <label for="signup-email">Email</label>
           <input type="email" id="signup-email" required placeholder="you@example.com" autocomplete="username">
           <label for="signup-password">Password</label>
-          <input type="password" id="signup-password" required placeholder="Password" autocomplete="new-password">
+          <div class="input-eye-row">
+            <input type="password" id="signup-password" required placeholder="Password" autocomplete="new-password">
+            <span class="eye-icon" id="signup-password-eye" tabindex="0" aria-label="Show password" role="button">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </span>
+          </div>
           <label for="signup-confirm-password">Confirm Password</label>
-          <input type="password" id="signup-confirm-password" required placeholder="Confirm Password" autocomplete="new-password">
+          <div class="input-eye-row">
+            <input type="password" id="signup-confirm-password" required placeholder="Confirm Password" autocomplete="new-password">
+            <span class="eye-icon" id="signup-confirm-password-eye" tabindex="0" aria-label="Show confirm password" role="button">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </span>
+          </div>
           <button type="submit" class="btn-primary">Sign Up</button>
           <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Login</a></p>
         </form>
@@ -61,6 +86,32 @@
       document.getElementById('signupForm').style.display = 'none';
       document.getElementById('loginForm').style.display = 'flex';
     };
+
+    // SVGs for eye open and closed
+    const eyeOpenSvg = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const eyeClosedSvg = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.12 10.12 0 0 1 12 19c-7 0-11-7-11-7a18.46 18.46 0 0 1 5.06-5.94"/><path d="M1 1l22 22"/><path d="M9.53 9.53a3.5 3.5 0 0 1 4.95 4.95"/><path d="M12 12v.01"/></svg>`;
+
+    function setupEyeToggle(inputId, eyeId) {
+      const input = document.getElementById(inputId);
+      const eye = document.getElementById(eyeId);
+      let visible = false;
+      function toggle() {
+        visible = !visible;
+        input.type = visible ? 'text' : 'password';
+        eye.innerHTML = visible ? eyeClosedSvg : eyeOpenSvg;
+        eye.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
+      }
+      eye.addEventListener('click', toggle);
+      eye.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          toggle();
+          e.preventDefault();
+        }
+      });
+    }
+    setupEyeToggle('login-password', 'login-password-eye');
+    setupEyeToggle('signup-password', 'signup-password-eye');
+    setupEyeToggle('signup-confirm-password', 'signup-confirm-password-eye');
   </script>
   <script type="module" src="./auth.js"></script>
   <script type="module" src="./firebase.js"></script>

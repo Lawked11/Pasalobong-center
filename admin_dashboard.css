@@ -1,0 +1,286 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f6f6f9;
+  color: #333;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  background: #6A2C1A;
+  position: relative;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #6A2C1A;
+  height: 67px;
+  padding: 0 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.admin-title {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.logout-btn {
+  background: #F9A825;
+  color: #6A2C1A;
+  padding: 8px 22px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.logout-btn:hover {
+  background: #6A2C1A;
+  color: #fff;
+  border: 1px solid #F9A825;
+  transform: translateY(-2px) scale(1.05);
+}
+main {
+  flex: 1 0 auto;
+  padding: 2rem 0 3rem 0;
+}
+.dashboard-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+.dashboard-section h1 {
+  color: #6A2C1A;
+  font-size: 2.1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.add-item-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.add-item-card h2 {
+  color: #F9A825;
+  font-size: 1.3rem;
+  margin-bottom: 1.2rem;
+  letter-spacing: 1px;
+  text-align: center;
+}
+#addItemForm .form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.12rem;
+}
+#addItemForm label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #6A2C1A;
+}
+#addItemForm input, #addItemForm textarea, #addItemForm select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d3cfcf;
+  background: #f9f6f3;
+  font-size: 1rem;
+  font-family: inherit;
+}
+#addItemForm input[type="file"] {
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+}
+#addItemForm button {
+  margin-top: 0.8rem;
+  background: #6A2C1A;
+  color: #fff;
+  padding: 0.7rem 1.7rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  transition: background 0.2s, transform 0.2s;
+  font-weight: 600;
+}
+#addItemForm button:hover {
+  background: #F9A825;
+  color: #6A2C1A;
+  transform: scale(1.06);
+}
+.table-section, .monitor-section {
+  margin-top: 2.5rem;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 1.5rem 1rem 2rem 1rem;
+}
+.table-section h2, .monitor-section h2 {
+  color: #6A2C1A;
+  margin-bottom: 1.1rem;
+  text-align: center;
+  font-size: 1.2rem;
+}
+.inventory-table,
+.orders-table,
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+  background: #fff;
+}
+.inventory-table th, .inventory-table td,
+.orders-table th, .orders-table td,
+.user-table th, .user-table td {
+  border-bottom: 1px solid #eee;
+  padding: 0.65rem 0.5rem;
+  text-align: center;
+  font-size: 1rem;
+}
+.inventory-table th, .orders-table th, .user-table th {
+  background: #fffbe7;
+  color: #6A2C1A;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.inventory-table img {
+  width: 54px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #ffe0b2;
+}
+.action-btn-group {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  align-items: center;
+}
+.table-btn {
+  background: #F9A825;
+  color: #6A2C1A;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-size: 1.03rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+}
+.table-btn:hover:not([disabled]) {
+  background: #6A2C1A;
+  color: #fff;
+  border: 1px solid #F9A825;
+  transform: translateY(-2px) scale(1.08);
+}
+.table-btn[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.logout-modal {
+  display: none;
+  position: fixed;
+  z-index: 3000;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(42, 35, 31, 0.28);
+  justify-content: center;
+  align-items: center;
+}
+.logout-modal.open {
+  display: flex;
+  animation: fadeIn 0.22s;
+}
+.logout-modal-content {
+  background: #fff;
+  padding: 2rem 2.2rem 1.4rem 2.2rem;
+  border-radius: 18px;
+  box-shadow: 0 12px 42px rgba(0,0,0,0.17);
+  text-align: center;
+  min-width: 260px;
+  max-width: 320px;
+  position: relative;
+  animation: popIn 0.27s cubic-bezier(.71,-0.27,.5,1.23);
+}
+.logout-modal-content h3 {
+  color: #F9A825;
+  font-size: 1.25rem;
+  margin-bottom: 0.6rem;
+}
+.logout-modal-content p {
+  color: #6A2C1A;
+  font-size: 1.03rem;
+  margin-bottom: 1.1rem;
+}
+.logout-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.1rem;
+}
+.modal-btn.logout-confirm {
+  background: linear-gradient(90deg, #F9A825 60%, #FFD54F 100%);
+  color: #6A2C1A;
+  font-weight: 600;
+  padding: 0.6rem 1.4rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.modal-btn.logout-confirm:hover {
+  background: linear-gradient(90deg, #6A2C1A 70%, #F9A825 100%);
+  color: #fffde4;
+  transform: scale(1.05);
+}
+.modal-btn.logout-cancel {
+  background: #eee;
+  color: #74432A;
+  font-weight: 600;
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.modal-btn.logout-cancel:hover {
+  background: #f3e8d1;
+  color: #F9A825;
+  transform: scale(1.05);
+}
+@media (max-width: 900px) {
+  .dashboard-section {
+    padding: 0.5rem;
+  }
+  .add-item-card, .table-section, .monitor-section {
+    padding: 1.15rem 0.2rem 1.3rem 0.2rem;
+    border-radius: 11px;
+  }
+  .add-item-card {
+    max-width: 99vw;
+    min-width: 90vw;
+  }
+  .inventory-table th, .inventory-table td,
+  .orders-table th, .orders-table td,
+  .user-table th, .user-table td {
+    font-size: 0.93rem;
+    padding: 0.55rem 0.1rem;
+  }
+  .action-btn-group {
+    gap: 0.2rem;
+  }
+}

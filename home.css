@@ -167,9 +167,11 @@ main {
 }
 
 .welcome-section h1 {
-  font-size: 2.2rem;
+  font-size: 2.3rem;
   color: #6A2C1A;
   margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+  font-weight: 700;
 }
 .welcome-section p {
   font-size: 1.15rem;
@@ -179,29 +181,36 @@ main {
 .btn-primary {
   background: #6A2C1A;
   color: #fff;
-  padding: 0.7rem 1.7rem;
-  font-size: 1rem;
+  padding: 0.7rem 2.1rem;
+  font-size: 1.08rem;
   border-radius: 6px;
   border: none;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
   transition: background 0.2s, transform 0.2s;
+  font-weight: 600;
+  margin-top: 1.1rem;
+  letter-spacing: 1px;
 }
 .btn-primary:hover {
   background: #F9A825;
   color: #6A2C1A;
-  transform: scale(1.06);
+  transform: scale(1.07);
+  border: 1px solid #6A2C1A;
 }
 
 .featured-products {
   padding: 2.5rem 0 3rem 0;
+  background: #faf9f6;
+  border-top: 1px solid #ffeab0;
 }
 .featured-products h2 {
   text-align: center;
   font-size: 1.7rem;
   margin-bottom: 2rem;
   color: #6A2C1A;
+  letter-spacing: 1px;
 }
 .categories-list {
   display: flex;
@@ -211,61 +220,73 @@ main {
 .category h4 {
   color: #F9A825;
   margin-bottom: 1rem;
-  font-size: 1.15rem;
+  font-size: 1.19rem;
   letter-spacing: 1px;
+  font-weight: 700;
+  text-shadow: 0 1px 0 #fffbe7;
 }
 .product-list {
   display: flex;
-  gap: 2rem;
+  gap: 2.5rem;
   justify-content: flex-start;
   flex-wrap: wrap;
+  margin-bottom: 0.8rem;
 }
 .product-card {
   background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  width: 220px;
-  padding: 1.4rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+  width: 230px;
+  padding: 1.5rem 1.2rem 1.2rem 1.2rem;
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.21s, box-shadow 0.21s;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 0.8rem;
+  border: 1.5px solid #f8eed7;
 }
 .product-card:hover {
-  transform: translateY(-5px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+  transform: translateY(-7px) scale(1.035);
+  box-shadow: 0 14px 42px rgba(0,0,0,0.13);
+  border: 1.5px solid #F9A825;
 }
 .product-card img {
-  width: 90px;
-  height: 90px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.07rem;
   background: #ffe0b2;
+  border: 1.5px solid #fffbe7;
 }
 .product-card h4 {
   color: #F9A825;
-  font-size: 1.13rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.15rem;
+  margin-bottom: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 .product-card p {
   color: #555;
-  font-size: 0.97rem;
+  font-size: 1rem;
   margin-bottom: 0.8rem;
+  min-height: 30px;
 }
 .order-btn {
   background: #F9A825;
   color: #6A2C1A;
   border: none;
   border-radius: 6px;
-  padding: 8px 18px;
-  margin-top: auto;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 10px 0;
+  width: 100%;
+  font-size: 1.04rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, color 0.2s, transform 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+  margin-top: auto;
+  letter-spacing: 1px;
 }
 .order-btn:hover {
   background: #6A2C1A;
@@ -283,6 +304,7 @@ footer {
   font-size: 1rem;
   letter-spacing: 1px;
   width: 100%;
+  border-top: 3px solid #F9A825;
 }
 
 /* --- Welcome Popup Modal --- */
@@ -424,60 +446,16 @@ footer {
   }
 }
 
-/* --- Toast notification styles (optional if you use toasts elsewhere) --- */
-#toastContainer {
-  position: fixed;
-  top: 22px;
-  right: 22px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  pointer-events: none;
-}
-.toast {
-  background: #fff;
-  color: #333;
-  padding: 18px 32px 15px 18px;
-  border-radius: 8px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.18);
-  border-left: 6px solid #F9A825;
-  font-size: 1rem;
-  font-weight: 500;
-  min-width: 190px;
-  max-width: 340px;
-  opacity: 0;
-  transform: translateY(-20px);
-  animation: toastIn 0.3s forwards, toastOut 0.3s 2.8s forwards;
-  pointer-events: auto;
-  position: relative;
-}
-.toast.success { border-left-color: #4CAF50; }
-.toast.error   { border-left-color: #e53935; }
-.toast.info    { border-left-color: #F9A825; }
-.toast .close-toast {
-  background: none;
-  border: none;
-  color: #6A2C1A;
-  font-size: 1.2rem;
-  position: absolute;
-  top: 9px;
-  right: 14px;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s;
-  pointer-events: auto;
-}
-.toast .close-toast:hover { opacity: 1; }
-@keyframes toastIn {
-  from { opacity: 0; transform: translateY(-25px);}
-  to { opacity: 1; transform: translateY(0);}
-}
-@keyframes toastOut {
-  to { opacity: 0; transform: translateY(-30px);}
-}
-
 /* Responsive Design */
+@media (max-width: 1100px) {
+  .dashboard-section, .featured-products {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .product-list {
+    gap: 1.3rem;
+  }
+}
 @media (max-width: 900px) {
   .product-list {
     flex-direction: column;
@@ -511,6 +489,7 @@ footer {
   .product-card {
     width: 97vw;
     max-width: 320px;
+    padding: 1.2rem 0.5rem;
   }
   .welcome-modal-content {
     min-width: 90vw;
