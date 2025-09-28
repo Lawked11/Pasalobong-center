@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pasalobong Center - Home</title>
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="navbar-left">
+        <button class="burger-menu" id="burgerMenuBtn" aria-label="Open menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
+      <div class="navbar-center">
+        PASALOBONG CENTER
+      </div>
+      <div class="navbar-right">
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+      <!-- Mobile Nav Drawer -->
+      <div id="mobileNav" class="mobile-nav">
+        <button class="close-mobile-nav" id="closeMobileNavBtn" aria-label="Close">&times;</button>
+        <ul>
+          <li><a href="#categories" onclick="closeMobileNav()">Categories</a></li>
+          <li><a href="index.html">Back to Main Site</a></li>
+          <li><button id="logoutBtnMobile" class="logout-btn">Logout</button></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <section class="welcome-section">
+      <h1>Welcome to Your Dashboard!</h1>
+      <p>Enjoy browsing our exclusive Filipino delicacies, souvenirs, and gifts. Happy shopping!</p>
+      <a href="index.html" class="btn-primary">Back to Main Site</a>
+    </section>
+    <section class="featured-products" id="categories">
+      <h2>Categories - Filipino Kakanin & Delicacies</h2>
+      <div class="categories-list">
+        <div class="category">
+          <h4>Seafood Snacks</h4>
+          <div class="product-list">
+            <div class="product-card">
+              <img src="images/tawalis.jpg" alt="Tawalis">
+              <h4>Tawalis</h4>
+              <p>Crispy dried freshwater sardines, perfect for snacking.</p>
+              <button class="order-btn">Order</button>
+            </div>
+            <div class="product-card">
+              <img src="images/tahong-chips.jpg" alt="Tahong Chips">
+              <h4>Tahong Chips</h4>
+              <p>Crunchy mussel chips with authentic seafood flavor.</p>
+              <button class="order-btn">Order</button>
+            </div>
+          </div>
+        </div>
+        <div class="category">
+          <h4>Kakanin & Rice Cakes</h4>
+          <div class="product-list">
+            <div class="product-card">
+              <img src="images/puto-cheese.jpg" alt="Puto Cheese">
+              <h4>Puto Cheese</h4>
+              <p>Soft steamed rice cakes topped with cheese.</p>
+              <button class="order-btn">Order</button>
+            </div>
+            <div class="product-card">
+              <img src="images/kutchinta.jpg" alt="Kutchinta">
+              <h4>Kutchinta</h4>
+              <p>Brown sticky rice cake, best with grated coconut.</p>
+              <button class="order-btn">Order</button>
+            </div>
+            <div class="product-card">
+              <img src="images/pichi-pichi.jpg" alt="Pichi-pichi">
+              <h4>Pichi-pichi</h4>
+              <p>Chewy cassava balls coated in coconut.</p>
+              <button class="order-btn">Order</button>
+            </div>
+            <div class="product-card">
+              <img src="images/sapin-sapin.jpg" alt="Sapin-sapin">
+              <h4>Sapin-sapin</h4>
+              <p>Colorful layered rice cake with coconut topping.</p>
+              <button class="order-btn">Order</button>
+            </div>
+            <div class="product-card">
+              <img src="images/cassava-cake.jpg" alt="Cassava Cake">
+              <h4>Cassava Cake</h4>
+              <p>Rich, buttery cassava dessert with creamy topping.</p>
+              <button class="order-btn">Order</button>
+            </div>
+            <div class="product-card">
+              <img src="images/biko.jpg" alt="Biko">
+              <h4>Biko</h4>
+              <p>Sweet sticky rice cake with latik on top.</p>
+              <button class="order-btn">Order</button>
+            </div>
+            <div class="product-card">
+              <img src="images/maja-blanca.jpg" alt="Maja Blanca">
+              <h4>Maja Blanca</h4>
+              <p>Creamy coconut pudding with corn kernels.</p>
+              <button class="order-btn">Order</button>
+            </div>
+          </div>
+        </div>
+        <div class="category">
+          <h4>Other Bestsellers</h4>
+          <div class="product-list">
+            <div class="product-card">
+              <img src="images/dried-mango.jpg" alt="Dried Mangoes">
+              <h4>Dried Mangoes</h4>
+              <p>Sweet and chewy Cebu dried mangoes.</p>
+              <button class="order-btn">Order</button>
+            </div>
+            <div class="product-card">
+              <img src="images/ube-jam.jpg" alt="Ube Jam">
+              <h4>Ube Jam</h4>
+              <p>Classic Baguio ube jam in a jar.</p>
+              <button class="order-btn">Order</button>
+            </div>
+            <div class="product-card">
+              <img src="images/pinatubo-shirt.jpg" alt="Pinatubo Shirt">
+              <h4>Pinatubo Shirt</h4>
+              <p>Souvenir shirt from Mt. Pinatubo.</p>
+              <button class="order-btn">Order</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p id="footer-text">&copy; <span id="year"></span> Pasalobong Center. All rights reserved.</p>
+  </footer>
+
+  <!-- Logout Confirmation Modal -->
+  <div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+      <h3>Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="logout-modal-actions">
+        <button id="confirmLogoutBtn" class="modal-btn logout-confirm">Logout</button>
+        <button id="cancelLogoutBtn" class="modal-btn logout-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome Modal -->
+  <div id="welcomeModal" class="welcome-modal">
+    <div class="welcome-modal-content">
+      <button class="close-welcome-modal" id="closeWelcomeModalBtn" aria-label="Close">&times;</button>
+      <h2>Welcome to Pasalobong Center!</h2>
+      <p>Glad to see you. Enjoy shopping and exploring our site.</p>
+    </div>
+  </div>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // --- Logout Confirmation Modal ---
+    const logoutModal = document.getElementById('logoutModal');
+    const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+    const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+
+    function showLogoutModal() {
+      logoutModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLogoutModal() {
+      logoutModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('logoutBtn').onclick = showLogoutModal;
+    document.getElementById('logoutBtnMobile').onclick = showLogoutModal;
+    cancelLogoutBtn.onclick = closeLogoutModal;
+
+    // When confirm
+    confirmLogoutBtn.onclick = function() {
+      closeLogoutModal();
+      window.location.href = "index.html";
+    };
+
+    // Close modal when clicking outside content
+    logoutModal.onclick = function(e) {
+      if (e.target === logoutModal) closeLogoutModal();
+    };
+
+    // Burger menu
+    const burgerMenuBtn = document.getElementById('burgerMenuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    const closeMobileNavBtn = document.getElementById('closeMobileNavBtn');
+    function openMobileNav() {
+      mobileNav.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMobileNav() {
+      mobileNav.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    burgerMenuBtn.onclick = openMobileNav;
+    closeMobileNavBtn.onclick = closeMobileNav;
+    // Close mobile nav when clicking outside menu
+    mobileNav.onclick = function(e) {
+      if (e.target === this) closeMobileNav();
+    };
+    window.closeMobileNav = closeMobileNav; // for inline onclick
+
+    // Welcome Modal
+    window.addEventListener('DOMContentLoaded', function() {
+      if (sessionStorage.getItem('showWelcomeModal') === 'true') {
+        document.getElementById('welcomeModal').classList.add('open');
+        sessionStorage.removeItem('showWelcomeModal');
+      }
+    });
+    document.getElementById('closeWelcomeModalBtn').onclick = function() {
+      document.getElementById('welcomeModal').classList.remove('open');
+    };
+    document.getElementById('welcomeModal').onclick = function(e) {
+      if (e.target === this) {
+        this.classList.remove('open');
+      }
+    };
+  </script>
+</body>
+</html>

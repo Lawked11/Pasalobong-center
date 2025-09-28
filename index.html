@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PASALOBONG CENTER — Login</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main>
+    <section class="auth-bg">
+      <div class="auth-card" id="authCard">
+        <div class="logo-circle">
+          <span>🍬</span>
+        </div>
+        <!-- Login Form (default) -->
+        <form class="auth-form" id="loginForm" autocomplete="off">
+          <h2>Sign in to Pasalobong Center</h2>
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" required placeholder="you@example.com" autocomplete="username">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required placeholder="Password" autocomplete="current-password">
+          <button type="submit" class="btn-primary">Login</button>
+          <p class="auth-switch">Don't have an account? <a href="#" id="showSignup">Sign Up</a></p>
+        </form>
+        <!-- Signup Form (hidden by default) -->
+        <form class="auth-form" id="signupForm" autocomplete="off" style="display:none;">
+          <h2>Create an account</h2>
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" required placeholder="you@example.com" autocomplete="username">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" required placeholder="Password" autocomplete="new-password">
+          <label for="signup-confirm-password">Confirm Password</label>
+          <input type="password" id="signup-confirm-password" required placeholder="Confirm Password" autocomplete="new-password">
+          <button type="submit" class="btn-primary">Sign Up</button>
+          <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Login</a></p>
+        </form>
+      </div>
+    </section>
+    <!-- Centered Notification Modal -->
+    <div id="notificationModal">
+      <div class="notification-content" id="notificationContent">
+        <button class="close-notification-modal" id="closeNotificationModalBtn" aria-label="Close">&times;</button>
+        <h3 id="notificationTitle"></h3>
+        <p id="notificationMessage"></p>
+        <button class="modal-btn" id="notificationActionBtn" style="display:none;">OK</button>
+      </div>
+    </div>
+  </main>
+  <script>
+    // Switch forms
+    document.getElementById('showSignup').onclick = function(e) {
+      e.preventDefault();
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('signupForm').style.display = 'flex';
+    };
+    document.getElementById('showLogin').onclick = function(e) {
+      e.preventDefault();
+      document.getElementById('signupForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'flex';
+    };
+  </script>
+  <script type="module" src="./auth.js"></script>
+</body>
+</html>
