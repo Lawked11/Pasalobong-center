@@ -1,21 +1,9 @@
-// Import Firebase libraries from CDN
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+// auth.js - Authentication Logic and UI Handling (Customer Registration)
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyD373HsUJ7jJsDZEKZQzaHGPAJglizaZY4",
-  authDomain: "pasalobong-486c3.firebaseapp.com",
-  projectId: "pasalobong-486c3",
-  storageBucket: "pasalobong-486c3.firebasestorage.app",
-  messagingSenderId: "157431097657",
-  appId: "1:157431097657:web:dc8afc6e6d18ada4a120e8",
-  measurementId: "G-Y13929E4XY"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Import Firebase auth functions and the auth instance from firebase.js
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { auth, db } from './firebase.js';
 
 // Centered Notification Modal function
 function showNotification(message, type = "info", title = "") {
@@ -73,14 +61,47 @@ document.addEventListener('submit', async function(e) {
       const email = e.target.querySelector('input[type="email"]').value;
       const password = e.target.querySelector('input[type="password"]').value;
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // Check user role by looking in both collections
+        let userRole = null;
+        let redirectUrl = null;
+        
+        // Check if user is admin
+        const adminDocRef = doc(db, 'admins', user.uid);
+        const adminDoc = await getDoc(adminDocRef);
+        
+        if (adminDoc.exists()) {
+          userRole = adminDoc.data().role;
+          redirectUrl = 'admin_dashboard.html';
+        } else {
+          // Check if user is customer
+          const customerDocRef = doc(db, 'customers', user.uid);
+          const customerDoc = await getDoc(customerDocRef);
+          
+          if (customerDoc.exists()) {
+            userRole = customerDoc.data().role;
+            redirectUrl = 'home.html';
+          }
+        }
+        
+        // If no role found, show error
+        if (!userRole) {
+          showNotification('User account not found in database. Please contact support.', 'error');
+          await signOut(auth);
+          return;
+        }
+        
         showNotification('Login successful! Redirecting...', 'success');
         if (document.getElementById('modalOverlay')) {
           document.getElementById('modalOverlay').classList.remove('open');
         }
         sessionStorage.setItem('showWelcomeModal', 'true');
+        sessionStorage.setItem('userRole', userRole);
+        
         setTimeout(() => {
-          window.location.href = "home.html";
+          window.location.href = redirectUrl;
         }, 1100);
       } catch (error) {
         showNotification(`Login failed: ${error.message}`, 'error');
@@ -106,8 +127,23 @@ document.addEventListener('submit', async function(e) {
         return;
       }
       try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        showNotification('Signup successful! Please login.', 'success');
+        // Create user account
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        
+        // PROFESSIONAL APPROACH: Store in separate top-level collection
+        // Path: customers/{uid}
+        const customerDocRef = doc(db, 'customers', user.uid);
+        await setDoc(customerDocRef, {
+          uid: user.uid,
+          email: email,
+          role: 'customer',
+          isActive: true,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+        
+        showNotification('Account created successfully! Please login.', 'success');
         if (document.getElementById('modalOverlay')) {
           document.getElementById('modalOverlay').classList.remove('open');
         }
