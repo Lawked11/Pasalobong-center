@@ -101,7 +101,7 @@
     logoutBtn.onclick = () => { logoutModal.classList.add('open'); document.body.style.overflow='hidden'; };
     cancelLogoutBtn.onclick = () => { logoutModal.classList.remove('open'); document.body.style.overflow=''; };
     logoutModal.onclick = (e) => { if (e.target === logoutModal) { logoutModal.classList.remove('open'); document.body.style.overflow=''; } };
-    confirmLogoutBtn.onclick = () => { logoutModal.classList.remove('open'); document.body.style.overflow=''; alert('Logged out! (UI Only)'); };
+    confirmLogoutBtn.onclick = () => { logoutModal.classList.remove('open'); document.body.style.overflow=''; window.location.href = 'index.html'; };
 
     const burgerBtn = document.getElementById('burgerBtn');
     const sideDrawer = document.getElementById('sideDrawer');

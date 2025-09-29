@@ -20,125 +20,72 @@
         PASALOBONG CENTER
       </div>
       <div class="navbar-right">
+        <button id="filterSortBtn" class="filter-sort-btn">
+          <span>⚙️</span> Filter & Sort
+        </button>
         <button id="logoutBtn" class="logout-btn">Logout</button>
       </div>
-      <!-- Mobile Nav Drawer -->
       <div id="mobileNav" class="mobile-nav">
         <button class="close-mobile-nav" id="closeMobileNavBtn" aria-label="Close">&times;</button>
         <ul>
-          <li><a href="#categories" onclick="closeMobileNav()">Categories</a></li>
+          <li><button id="filterSortBtnMobile" class="filter-sort-btn">Filter & Sort</button></li>
           <li><a href="index.html">Back to Main Site</a></li>
           <li><button id="logoutBtnMobile" class="logout-btn">Logout</button></li>
         </ul>
       </div>
     </nav>
   </header>
+
   <main>
-    <section class="welcome-section">
-      <h1>Welcome to Your Dashboard!</h1>
-      <p>Enjoy browsing our exclusive Filipino delicacies, souvenirs, and gifts. Happy shopping!</p>
-      <a href="index.html" class="btn-primary">Back to Main Site</a>
-    </section>
-    <section class="featured-products" id="categories">
-      <h2>Categories - Filipino Kakanin & Delicacies</h2>
-      <div class="categories-list">
-        <div class="category">
-          <h4>Seafood Snacks</h4>
-          <div class="product-list">
-            <div class="product-card">
-              <img src="images/tawalis.jpg" alt="Tawalis">
-              <h4>Tawalis</h4>
-              <p>Crispy dried freshwater sardines, perfect for snacking.</p>
-              <button class="order-btn">Order</button>
-            </div>
-            <div class="product-card">
-              <img src="images/tahong-chips.jpg" alt="Tahong Chips">
-              <h4>Tahong Chips</h4>
-              <p>Crunchy mussel chips with authentic seafood flavor.</p>
-              <button class="order-btn">Order</button>
-            </div>
-          </div>
-        </div>
-        <div class="category">
-          <h4>Kakanin & Rice Cakes</h4>
-          <div class="product-list">
-            <div class="product-card">
-              <img src="images/puto-cheese.jpg" alt="Puto Cheese">
-              <h4>Puto Cheese</h4>
-              <p>Soft steamed rice cakes topped with cheese.</p>
-              <button class="order-btn">Order</button>
-            </div>
-            <div class="product-card">
-              <img src="images/kutchinta.jpg" alt="Kutchinta">
-              <h4>Kutchinta</h4>
-              <p>Brown sticky rice cake, best with grated coconut.</p>
-              <button class="order-btn">Order</button>
-            </div>
-            <div class="product-card">
-              <img src="images/pichi-pichi.jpg" alt="Pichi-pichi">
-              <h4>Pichi-pichi</h4>
-              <p>Chewy cassava balls coated in coconut.</p>
-              <button class="order-btn">Order</button>
-            </div>
-            <div class="product-card">
-              <img src="images/sapin-sapin.jpg" alt="Sapin-sapin">
-              <h4>Sapin-sapin</h4>
-              <p>Colorful layered rice cake with coconut topping.</p>
-              <button class="order-btn">Order</button>
-            </div>
-            <div class="product-card">
-              <img src="images/cassava-cake.jpg" alt="Cassava Cake">
-              <h4>Cassava Cake</h4>
-              <p>Rich, buttery cassava dessert with creamy topping.</p>
-              <button class="order-btn">Order</button>
-            </div>
-            <div class="product-card">
-              <img src="images/biko.jpg" alt="Biko">
-              <h4>Biko</h4>
-              <p>Sweet sticky rice cake with latik on top.</p>
-              <button class="order-btn">Order</button>
-            </div>
-            <div class="product-card">
-              <img src="images/maja-blanca.jpg" alt="Maja Blanca">
-              <h4>Maja Blanca</h4>
-              <p>Creamy coconut pudding with corn kernels.</p>
-              <button class="order-btn">Order</button>
-            </div>
-          </div>
-        </div>
-        <div class="category">
-          <h4>Other Bestsellers</h4>
-          <div class="product-list">
-            <div class="product-card">
-              <img src="images/dried-mango.jpg" alt="Dried Mangoes">
-              <h4>Dried Mangoes</h4>
-              <p>Sweet and chewy Cebu dried mangoes.</p>
-              <button class="order-btn">Order</button>
-            </div>
-            <div class="product-card">
-              <img src="images/ube-jam.jpg" alt="Ube Jam">
-              <h4>Ube Jam</h4>
-              <p>Classic Baguio ube jam in a jar.</p>
-              <button class="order-btn">Order</button>
-            </div>
-            <div class="product-card">
-              <img src="images/pinatubo-shirt.jpg" alt="Pinatubo Shirt">
-              <h4>Pinatubo Shirt</h4>
-              <p>Souvenir shirt from Mt. Pinatubo.</p>
-              <button class="order-btn">Order</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <section class="welcome-section"></section>
+    
+    <section class="products-section">
+      <h2>Our Products</h2>
+      <div id="loadingSpinner" class="loading-spinner">Loading products...</div>
+      <div id="productsGrid" class="products-grid"></div>
     </section>
   </main>
+
   <footer>
-    <p id="footer-text">&copy; <span id="year"></span> Pasalobong Center. All rights reserved.</p>
+    <p>&copy; <span id="year"></span> Pasalobong Center. All rights reserved.</p>
   </footer>
 
-  <!-- Logout Confirmation Modal -->
+  <!-- Filter & Sort Modal -->
+  <div id="filterSortModal" class="filter-sort-modal">
+    <div class="modal-content">
+      <button class="close-modal" id="closeFilterSortBtn">&times;</button>
+      <h3>Filter & Sort Products</h3>
+      
+      <div class="filter-section">
+        <h4>Categories</h4>
+        <div id="categoryFilters" class="category-filters">
+          <!-- Categories will be dynamically populated -->
+        </div>
+      </div>
+      
+      <div class="filter-section">
+        <h4>Sort By</h4>
+        <select id="sortSelect">
+          <option value="default">Default</option>
+          <option value="name-asc">Name (A-Z)</option>
+          <option value="name-desc">Name (Z-A)</option>
+          <option value="price-asc">Price (Low to High)</option>
+          <option value="price-desc">Price (High to Low)</option>
+          <option value="stock-asc">Stock (Low to High)</option>
+          <option value="stock-desc">Stock (High to Low)</option>
+        </select>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="filter-btn apply" id="applyFilters">Apply</button>
+        <button class="filter-btn clear" id="clearFilters">Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Other Modals -->
   <div id="logoutModal" class="logout-modal">
-    <div class="logout-modal-content">
+    <div class="modal-content">
       <h3>Confirm Logout</h3>
       <p>Are you sure you want to logout?</p>
       <div class="logout-modal-actions">
@@ -148,26 +95,340 @@
     </div>
   </div>
 
-  <!-- Welcome Modal -->
   <div id="welcomeModal" class="welcome-modal">
-    <div class="welcome-modal-content">
-      <button class="close-welcome-modal" id="closeWelcomeModalBtn" aria-label="Close">&times;</button>
+    <div class="modal-content">
+      <button class="close-modal" id="closeWelcomeModalBtn">&times;</button>
       <h2>Welcome to Pasalobong Center!</h2>
       <p>Glad to see you. Enjoy shopping and exploring our site.</p>
     </div>
   </div>
-  <script>
+
+  <div id="productModal" class="product-modal">
+    <div class="modal-content product-modal-content">
+      <button class="close-modal" id="closeProductModalBtn">&times;</button>
+      <div id="productModalContent"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD373HsUJ7jJsDZEKZQzaHGPAJglizaZY4",
+      authDomain: "pasalobong-486c3.firebaseapp.com",
+      projectId: "pasalobong-486c3",
+      storageBucket: "pasalobong-486c3.firebasestorage.app",
+      messagingSenderId: "157431097657",
+      appId: "1:157431097657:web:dc8afc6e6d18ada4a120e8",
+      measurementId: "G-Y13929E4XY"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Global variables
+    let allProducts = [];
+    let filteredProducts = [];
+    let activeCategories = new Set();
+    let allCategories = new Set();
+
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // --- Logout Confirmation Modal ---
-    const logoutModal = document.getElementById('logoutModal');
-    const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
-    const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+    // Load products from Firestore
+    async function loadProducts() {
+      const loadingSpinner = document.getElementById('loadingSpinner');
+      const productsGrid = document.getElementById('productsGrid');
+      
+      try {
+        const productsQuery = query(
+          collection(db, 'products'),
+          where('isActive', '==', true),
+          orderBy('createdAt', 'desc')
+        );
+        
+        const querySnapshot = await getDocs(productsQuery);
+        
+        if (querySnapshot.empty) {
+          loadingSpinner.innerHTML = '<div class="no-products">No products available at the moment.</div>';
+          return;
+        }
 
+        allProducts = [];
+        querySnapshot.forEach((doc) => {
+          const product = { id: doc.id, ...doc.data() };
+          allProducts.push(product);
+          allCategories.add(product.category || 'Other');
+        });
+
+        filteredProducts = [...allProducts];
+        loadingSpinner.style.display = 'none';
+        displayProducts();
+        populateCategories();
+        
+      } catch (error) {
+        console.error('Error loading products:', error);
+        loadingSpinner.innerHTML = '<div class="no-products">Error loading products. Please try again later.</div>';
+      }
+    }
+
+    function displayProducts() {
+      const productsGrid = document.getElementById('productsGrid');
+      productsGrid.innerHTML = '';
+      
+      if (filteredProducts.length === 0) {
+        productsGrid.innerHTML = '<div class="no-products">No products found matching your criteria.</div>';
+        return;
+      }
+      
+      filteredProducts.forEach(product => {
+        const productCard = createProductCard(product);
+        productsGrid.appendChild(productCard);
+      });
+    }
+
+    function createProductCard(product) {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.onclick = () => showProductDetails(product);
+      
+      const img = document.createElement('img');
+      img.src = product.imageUrl || 'images/placeholder.jpg';
+      img.alt = product.name;
+      img.onerror = () => { img.src = 'images/placeholder.jpg'; };
+      
+      const title = document.createElement('h4');
+      title.textContent = product.name;
+      
+      const description = document.createElement('p');
+      description.textContent = product.description;
+      
+      const price = document.createElement('div');
+      price.className = 'price';
+      price.textContent = `₱${parseFloat(product.price).toFixed(2)}`;
+      
+      const stockInfo = document.createElement('div');
+      stockInfo.className = 'stock-info';
+      if (product.stock > 0) {
+        stockInfo.textContent = `In Stock: ${product.stock}`;
+      } else {
+        stockInfo.textContent = 'Out of Stock';
+        stockInfo.classList.add('out-of-stock');
+      }
+      
+      const orderBtn = document.createElement('button');
+      orderBtn.className = 'order-btn';
+      orderBtn.textContent = product.stock > 0 ? 'Order' : 'Out of Stock';
+      orderBtn.disabled = product.stock <= 0;
+      orderBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (product.stock > 0) {
+          alert(`Ordering ${product.name}. This will be connected to your cart system.`);
+        }
+      };
+      
+      card.appendChild(img);
+      card.appendChild(title);
+      card.appendChild(description);
+      card.appendChild(price);
+      card.appendChild(stockInfo);
+      card.appendChild(orderBtn);
+      
+      return card;
+    }
+
+    function populateCategories() {
+      const categoryFilters = document.getElementById('categoryFilters');
+      categoryFilters.innerHTML = '';
+      
+      // Add "All" option
+      const allFilter = document.createElement('div');
+      allFilter.className = 'category-filter active';
+      allFilter.textContent = 'All';
+      allFilter.onclick = () => toggleCategory('All');
+      categoryFilters.appendChild(allFilter);
+      
+      // Add individual categories
+      Array.from(allCategories).sort().forEach(category => {
+        const filter = document.createElement('div');
+        filter.className = 'category-filter';
+        filter.textContent = category;
+        filter.onclick = () => toggleCategory(category);
+        categoryFilters.appendChild(filter);
+      });
+    }
+
+    function toggleCategory(category) {
+      const filters = document.querySelectorAll('.category-filter');
+      
+      if (category === 'All') {
+        activeCategories.clear();
+        filters.forEach(filter => {
+          filter.classList.remove('active');
+          if (filter.textContent === 'All') {
+            filter.classList.add('active');
+          }
+        });
+      } else {
+        // Remove "All" selection
+        filters.forEach(filter => {
+          if (filter.textContent === 'All') {
+            filter.classList.remove('active');
+          }
+        });
+        
+        // Toggle category
+        const filterElement = Array.from(filters).find(f => f.textContent === category);
+        if (activeCategories.has(category)) {
+          activeCategories.delete(category);
+          filterElement.classList.remove('active');
+        } else {
+          activeCategories.add(category);
+          filterElement.classList.add('active');
+        }
+        
+        // If no categories selected, show all
+        if (activeCategories.size === 0) {
+          filters[0].classList.add('active'); // "All" filter
+        }
+      }
+    }
+
+    function applyFilters() {
+      let filtered = [...allProducts];
+      
+      // Apply category filter
+      if (activeCategories.size > 0) {
+        filtered = filtered.filter(product => 
+          activeCategories.has(product.category || 'Other')
+        );
+      }
+      
+      // Apply sorting
+      const sortValue = document.getElementById('sortSelect').value;
+      switch (sortValue) {
+        case 'name-asc':
+          filtered.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'name-desc':
+          filtered.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        case 'price-asc':
+          filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+          break;
+        case 'price-desc':
+          filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+          break;
+        case 'stock-asc':
+          filtered.sort((a, b) => a.stock - b.stock);
+          break;
+        case 'stock-desc':
+          filtered.sort((a, b) => b.stock - a.stock);
+          break;
+        default:
+          // Keep original order (by createdAt desc)
+          break;
+      }
+      
+      filteredProducts = filtered;
+      displayProducts();
+      closeFilterSortModal();
+    }
+
+    function clearFilters() {
+      activeCategories.clear();
+      document.getElementById('sortSelect').value = 'default';
+      
+      // Reset category filters
+      const filters = document.querySelectorAll('.category-filter');
+      filters.forEach(filter => {
+        filter.classList.remove('active');
+        if (filter.textContent === 'All') {
+          filter.classList.add('active');
+        }
+      });
+      
+      filteredProducts = [...allProducts];
+      displayProducts();
+    }
+
+    function showProductDetails(product) {
+      const modal = document.getElementById('productModal');
+      const modalContent = document.getElementById('productModalContent');
+      
+      modalContent.innerHTML = `
+        <img src="${product.imageUrl}" alt="${product.name}" onerror="this.src='images/placeholder.jpg'">
+        <h2>${product.name}</h2>
+        <div class="price">₱${parseFloat(product.price).toFixed(2)}</div>
+        <div class="description">${product.description}</div>
+        <div class="stock-info ${product.stock <= 0 ? 'out-of-stock' : ''}">
+          ${product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'}
+        </div>
+        <button class="order-btn" ${product.stock <= 0 ? 'disabled' : ''} onclick="orderProduct('${product.id}', '${product.name}')">
+          ${product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+        </button>
+      `;
+      
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    window.orderProduct = function(productId, productName) {
+      alert(`Adding ${productName} to cart. This will be connected to your cart system.`);
+      document.getElementById('productModal').classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    // Filter & Sort Modal Functions
+    function showFilterSortModal() {
+      document.getElementById('filterSortModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeFilterSortModal() {
+      document.getElementById('filterSortModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Event Listeners for Filter & Sort
+    document.getElementById('filterSortBtn').onclick = showFilterSortModal;
+    document.getElementById('filterSortBtnMobile').onclick = () => {
+      closeMobileNav();
+      showFilterSortModal();
+    };
+    document.getElementById('closeFilterSortBtn').onclick = closeFilterSortModal;
+    document.getElementById('applyFilters').onclick = applyFilters;
+    document.getElementById('clearFilters').onclick = clearFilters;
+
+    document.getElementById('filterSortModal').onclick = (e) => {
+      if (e.target.id === 'filterSortModal') {
+        closeFilterSortModal();
+      }
+    };
+
+    // Product Modal Event Listeners
+    document.getElementById('closeProductModalBtn').onclick = () => {
+      document.getElementById('productModal').classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    document.getElementById('productModal').onclick = (e) => {
+      if (e.target.id === 'productModal') {
+        document.getElementById('productModal').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    };
+
+    // Logout functionality
+    const logoutModal = document.getElementById('logoutModal');
+    
     function showLogoutModal() {
       logoutModal.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
+    
     function closeLogoutModal() {
       logoutModal.classList.remove('open');
       document.body.style.overflow = '';
@@ -175,16 +436,14 @@
 
     document.getElementById('logoutBtn').onclick = showLogoutModal;
     document.getElementById('logoutBtnMobile').onclick = showLogoutModal;
-    cancelLogoutBtn.onclick = closeLogoutModal;
+    document.getElementById('cancelLogoutBtn').onclick = closeLogoutModal;
 
-    // When confirm
-    confirmLogoutBtn.onclick = function() {
+    document.getElementById('confirmLogoutBtn').onclick = function() {
       closeLogoutModal();
       window.location.href = "index.html";
     };
 
-    // Close modal when clicking outside content
-    logoutModal.onclick = function(e) {
+    logoutModal.onclick = (e) => {
       if (e.target === logoutModal) closeLogoutModal();
     };
 
@@ -192,21 +451,23 @@
     const burgerMenuBtn = document.getElementById('burgerMenuBtn');
     const mobileNav = document.getElementById('mobileNav');
     const closeMobileNavBtn = document.getElementById('closeMobileNavBtn');
+    
     function openMobileNav() {
       mobileNav.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
+    
     function closeMobileNav() {
       mobileNav.classList.remove('open');
       document.body.style.overflow = '';
     }
+    
     burgerMenuBtn.onclick = openMobileNav;
     closeMobileNavBtn.onclick = closeMobileNav;
-    // Close mobile nav when clicking outside menu
-    mobileNav.onclick = function(e) {
-      if (e.target === this) closeMobileNav();
+    mobileNav.onclick = (e) => {
+      if (e.target === mobileNav) closeMobileNav();
     };
-    window.closeMobileNav = closeMobileNav; // for inline onclick
+    window.closeMobileNav = closeMobileNav;
 
     // Welcome Modal
     window.addEventListener('DOMContentLoaded', function() {
@@ -214,13 +475,17 @@
         document.getElementById('welcomeModal').classList.add('open');
         sessionStorage.removeItem('showWelcomeModal');
       }
+      
+      loadProducts();
     });
-    document.getElementById('closeWelcomeModalBtn').onclick = function() {
+    
+    document.getElementById('closeWelcomeModalBtn').onclick = () => {
       document.getElementById('welcomeModal').classList.remove('open');
     };
-    document.getElementById('welcomeModal').onclick = function(e) {
-      if (e.target === this) {
-        this.classList.remove('open');
+    
+    document.getElementById('welcomeModal').onclick = (e) => {
+      if (e.target.id === 'welcomeModal') {
+        document.getElementById('welcomeModal').classList.remove('open');
       }
     };
   </script>

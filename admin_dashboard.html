@@ -13,7 +13,7 @@
         <span></span><span></span><span></span>
       </button>
       <div class="navbar-left">
-        <span class="admin-title">ADD PRODUCTS</span>
+        <span class="admin-title">ADMIN DASHBOARD</span>
       </div>
       <div class="navbar-right">
         <button id="logoutBtn" class="logout-btn">Logout</button>
@@ -24,56 +24,88 @@
   <aside id="sideDrawer" class="side-drawer" aria-hidden="true">
     <div class="drawer-header">Menu</div>
     <ul class="drawer-list">
-      <li><a href="admin_dashboard.html">Add Products</a></li>
+      <li><a href="admin_dashboard.html">Admin Dashboard</a></li>
       <li><a href="inventory.html">Product Inventory & Monitoring</a></li>
       <li><a href="users.html">User Accounts Management</a></li>
       <li><a href="orders.html">Order Monitoring</a></li>
     </ul>
   </aside>
   <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
+  
   <main>
     <section class="dashboard-section">
-      <h1>Add Products</h1>
-      <!-- Add Product Form -->
-      <div class="add-item-card">
-        <h2>Add New Item</h2>
-        <form id="addItemForm" enctype="multipart/form-data">
-          <div class="form-row">
-            <label for="itemName">Product Name</label>
-            <input type="text" id="itemName" required>
+      
+      <!-- Dashboard Overview Cards -->
+      <div class="dashboard-overview">
+        <div class="overview-card">
+          <div class="card-icon">📦</div>
+          <div class="card-content">
+            <h3>Total Products</h3>
+            <p class="card-number">156</p>
+            <span class="card-subtitle">Active products</span>
           </div>
-          <div class="form-row">
-            <label for="itemCategory">Category</label>
-            <select id="itemCategory" required>
-              <option value="">Select category</option>
-              <option value="Seafood Snacks">Seafood Snacks</option>
-              <option value="Kakanin & Rice Cakes">Kakanin & Rice Cakes</option>
-              <option value="Other Bestsellers">Other Bestsellers</option>
-            </select>
+        </div>
+        
+        <div class="overview-card">
+          <div class="card-icon">👥</div>
+          <div class="card-content">
+            <h3>Total Users</h3>
+            <p class="card-number">2,341</p>
+            <span class="card-subtitle">Registered users</span>
           </div>
-          <div class="form-row">
-            <label for="itemDesc">Description</label>
-            <textarea id="itemDesc" rows="2" required></textarea>
+        </div>
+        
+        <div class="overview-card">
+          <div class="card-icon">📋</div>
+          <div class="card-content">
+            <h3>Total Orders</h3>
+            <p class="card-number">89</p>
+            <span class="card-subtitle">Pending orders</span>
           </div>
-          <div class="form-row">
-            <label for="itemImage">Product Image</label>
-            <input type="file" id="itemImage" accept="image/*" required>
+        </div>
+        
+        <div class="overview-card">
+          <div class="card-icon">💰</div>
+          <div class="card-content">
+            <h3>Total Revenue</h3>
+            <p class="card-number">₱45,230</p>
+            <span class="card-subtitle">This month</span>
           </div>
-          <div class="form-row">
-            <label for="itemStock">Stock</label>
-            <input type="number" id="itemStock" min="0" required>
-          </div>
-          <div class="form-row">
-            <label for="itemPrice">Price (₱)</label>
-            <input type="number" id="itemPrice" min="0" step="0.01" required>
-          </div>
-          <button type="submit" class="btn-primary">Add Item</button>
-        </form>
+        </div>
       </div>
-
-      <!-- Tables have been moved to their own pages via the burger menu -->
+      
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-buttons">
+          <a href="inventory.html" class="action-btn">
+            <div class="btn-icon">📦</div>
+            <div class="btn-content">
+              <h4>Manage Products</h4>
+              <p>Add, edit, or view products</p>
+            </div>
+          </a>
+          
+          <a href="users.html" class="action-btn">
+            <div class="btn-icon">👥</div>
+            <div class="btn-content">
+              <h4>Manage Users</h4>
+              <p>View and manage user accounts</p>
+            </div>
+          </a>
+          
+          <a href="orders.html" class="action-btn">
+            <div class="btn-icon">📋</div>
+            <div class="btn-content">
+              <h4>View Orders</h4>
+              <p>Monitor and process orders</p>
+            </div>
+          </a>
+        </div>
+      </div>
     </section>
   </main>
+  
   <!-- Logout Modal -->
   <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -85,6 +117,7 @@
       </div>
     </div>
   </div>
+  
   <script>
     // UI Only: Modal logic for logout (no backend)
     const logoutModal = document.getElementById('logoutModal');
@@ -105,7 +138,7 @@
     document.getElementById('confirmLogoutBtn').onclick = () => {
       logoutModal.classList.remove('open');
       document.body.style.overflow = '';
-      alert("Logged out! (UI Only)");
+      window.location.href = 'index.html';
     };
 
     // Burger / Drawer
@@ -131,25 +164,6 @@
     sideDrawer.addEventListener('click', (e) => {
       if (e.target.tagName === 'A') closeDrawer();
     });
-
-    // Add/Edit/Delete/Mark Done/Status buttons (UI only)
-    document.querySelectorAll('.table-btn').forEach(btn=>{
-      btn.onclick = ()=>{
-        if(btn.classList.contains('edit-btn')) alert('Edit item (UI Only)');
-        else if(btn.classList.contains('delete-btn')) alert('Delete item (UI Only)');
-        else if(btn.classList.contains('status-btn')) alert('Change product status (UI Only)');
-        else if(btn.classList.contains('edit-user-btn')) alert('Edit user (UI Only)');
-        else if(btn.classList.contains('delete-user-btn')) alert('Delete user (UI Only)');
-        else if(btn.classList.contains('status-user-btn')) alert('Change user status (UI Only)');
-        else if(btn.classList.contains('mark-btn')) alert('Order marked as Done! (UI Only)');
-        else if(btn.classList.contains('delete-order-btn')) alert('Order deleted! (UI Only)');
-      };
-    });
-    document.getElementById('addItemForm').onsubmit = function(e){
-      e.preventDefault();
-      alert("Item Added! (UI Only)");
-      this.reset();
-    };
   </script>
 </body>
 </html>
