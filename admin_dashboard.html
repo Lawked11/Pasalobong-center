@@ -6,20 +6,34 @@
   <title>Admin Dashboard - Pasalobong Center</title>
   <link rel="stylesheet" href="admin_dashboard.css">
 </head>
-<body>
+<body class="no-scroll">
   <header>
     <nav class="navbar">
+      <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="sideDrawer">
+        <span></span><span></span><span></span>
+      </button>
       <div class="navbar-left">
-        <span class="admin-title">ADMIN DASHBOARD</span>
+        <span class="admin-title">ADD PRODUCTS</span>
       </div>
       <div class="navbar-right">
         <button id="logoutBtn" class="logout-btn">Logout</button>
       </div>
     </nav>
   </header>
+  <!-- Side Drawer -->
+  <aside id="sideDrawer" class="side-drawer" aria-hidden="true">
+    <div class="drawer-header">Menu</div>
+    <ul class="drawer-list">
+      <li><a href="admin_dashboard.html">Add Products</a></li>
+      <li><a href="inventory.html">Product Inventory & Monitoring</a></li>
+      <li><a href="users.html">User Accounts Management</a></li>
+      <li><a href="orders.html">Order Monitoring</a></li>
+    </ul>
+  </aside>
+  <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
   <main>
     <section class="dashboard-section">
-      <h1>Admin Controls</h1>
+      <h1>Add Products</h1>
       <!-- Add Product Form -->
       <div class="add-item-card">
         <h2>Add New Item</h2>
@@ -57,167 +71,7 @@
         </form>
       </div>
 
-      <!-- Product Inventory Table -->
-      <div class="table-section">
-        <h2>Product Inventory & Monitoring</h2>
-        <table class="inventory-table" id="inventoryTable">
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Description</th>
-              <th>Stock</th>
-              <th>Price (₱)</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><img src="images/tawalis.jpg" alt="Tawalis" /></td>
-              <td>Tawalis</td>
-              <td>Seafood Snacks</td>
-              <td>Crispy dried freshwater sardines, perfect for snacking.</td>
-              <td>50</td>
-              <td>₱120.00</td>
-              <td>Active</td>
-              <td>
-                <div class="action-btn-group">
-                  <button class="table-btn edit-btn">Edit</button>
-                  <button class="table-btn delete-btn">Delete</button>
-                  <button class="table-btn status-btn">Deactivate</button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td><img src="images/puto-cheese.jpg" alt="Puto Cheese" /></td>
-              <td>Puto Cheese</td>
-              <td>Kakanin & Rice Cakes</td>
-              <td>Soft steamed rice cakes topped with cheese.</td>
-              <td>100</td>
-              <td>₱60.00</td>
-              <td>Inactive</td>
-              <td>
-                <div class="action-btn-group">
-                  <button class="table-btn edit-btn">Edit</button>
-                  <button class="table-btn delete-btn">Delete</button>
-                  <button class="table-btn status-btn">Activate</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- User Accounts Management Table -->
-      <div class="table-section">
-        <h2>User Accounts Management</h2>
-        <table class="user-table" id="userTable">
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Registered</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>USR1001</td>
-              <td>juan@email.com</td>
-              <td>Customer</td>
-              <td>Active</td>
-              <td>2025-09-20</td>
-              <td>
-                <div class="action-btn-group">
-                  <button class="table-btn edit-user-btn">Edit</button>
-                  <button class="table-btn status-user-btn">Deactivate</button>
-                  <button class="table-btn delete-user-btn">Delete</button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>USR1002</td>
-              <td>admin@email.com</td>
-              <td>Admin</td>
-              <td>Active</td>
-              <td>2025-08-12</td>
-              <td>
-                <div class="action-btn-group">
-                  <button class="table-btn edit-user-btn">Edit</button>
-                  <button class="table-btn status-user-btn" disabled>Deactivate</button>
-                  <button class="table-btn delete-user-btn" disabled>Delete</button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>USR1003</td>
-              <td>maria@email.com</td>
-              <td>Customer</td>
-              <td>Inactive</td>
-              <td>2025-09-10</td>
-              <td>
-                <div class="action-btn-group">
-                  <button class="table-btn edit-user-btn">Edit</button>
-                  <button class="table-btn status-user-btn">Activate</button>
-                  <button class="table-btn delete-user-btn">Delete</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Order Monitoring Table -->
-      <div class="monitor-section">
-        <h2>Order Monitoring</h2>
-        <table class="orders-table" id="ordersTable">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>User Email</th>
-              <th>Items</th>
-              <th>Total (₱)</th>
-              <th>Status</th>
-              <th>Timestamp</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>ORD123456</td>
-              <td>juan@email.com</td>
-              <td>2x Tawalis<br>1x Ube Jam</td>
-              <td>₱300.00</td>
-              <td>Pending</td>
-              <td>2025-09-28 15:10</td>
-              <td>
-                <div class="action-btn-group">
-                  <button class="table-btn mark-btn">Mark Done</button>
-                  <button class="table-btn delete-order-btn">Delete</button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>ORD123457</td>
-              <td>maria@email.com</td>
-              <td>3x Puto Cheese</td>
-              <td>₱180.00</td>
-              <td>Completed</td>
-              <td>2025-09-28 14:55</td>
-              <td>
-                <div class="action-btn-group">
-                  <button class="table-btn mark-btn" disabled>Mark Done</button>
-                  <button class="table-btn delete-order-btn">Delete</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- Tables have been moved to their own pages via the burger menu -->
     </section>
   </main>
   <!-- Logout Modal -->
@@ -253,6 +107,30 @@
       document.body.style.overflow = '';
       alert("Logged out! (UI Only)");
     };
+
+    // Burger / Drawer
+    const burgerBtn = document.getElementById('burgerBtn');
+    const sideDrawer = document.getElementById('sideDrawer');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    function openDrawer() {
+      sideDrawer.classList.add('open');
+      drawerBackdrop.hidden = false;
+      document.body.style.overflow = 'hidden';
+      burgerBtn.setAttribute('aria-expanded', 'true');
+      sideDrawer.setAttribute('aria-hidden', 'false');
+    }
+    function closeDrawer() {
+      sideDrawer.classList.remove('open');
+      drawerBackdrop.hidden = true;
+      document.body.style.overflow = '';
+      burgerBtn.setAttribute('aria-expanded', 'false');
+      sideDrawer.setAttribute('aria-hidden', 'true');
+    }
+    burgerBtn.onclick = openDrawer;
+    drawerBackdrop.onclick = closeDrawer;
+    sideDrawer.addEventListener('click', (e) => {
+      if (e.target.tagName === 'A') closeDrawer();
+    });
 
     // Add/Edit/Delete/Mark Done/Status buttons (UI only)
     document.querySelectorAll('.table-btn').forEach(btn=>{

@@ -1,0 +1,3 @@
+/* Inventory page specific overrides (keeps base from admin_dashboard.css) */
+.dashboard-section h2 { color: #6A2C1A; }
+

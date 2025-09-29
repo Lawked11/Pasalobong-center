@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Users - Admin</title>
+  <link rel="stylesheet" href="admin_dashboard.css">
+  <link rel="stylesheet" href="users.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="sideDrawer">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="navbar-left">
+        <span class="admin-title">USER ACCOUNTS</span>
+      </div>
+      <div class="navbar-right">
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+    </nav>
+  </header>
+  <aside id="sideDrawer" class="side-drawer" aria-hidden="true">
+    <div class="drawer-header">Menu</div>
+    <ul class="drawer-list">
+      <li><a href="admin_dashboard.html">Add Products</a></li>
+      <li><a href="inventory.html">Product Inventory & Monitoring</a></li>
+      <li><a href="users.html">User Accounts Management</a></li>
+      <li><a href="orders.html">Order Monitoring</a></li>
+    </ul>
+  </aside>
+  <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
+  <main>
+    <section class="dashboard-section">
+      <div class="table-section">
+        <h2>User Accounts Management</h2>
+        <table class="user-table" id="userTable">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Registered</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>USR1001</td>
+              <td>juan@email.com</td>
+              <td>Customer</td>
+              <td>Active</td>
+              <td>2025-09-20</td>
+              <td>
+                <div class="action-btn-group">
+                  <button class="table-btn edit-user-btn">Edit</button>
+                  <button class="table-btn status-user-btn">Deactivate</button>
+                  <button class="table-btn delete-user-btn">Delete</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>USR1002</td>
+              <td>admin@email.com</td>
+              <td>Admin</td>
+              <td>Active</td>
+              <td>2025-08-12</td>
+              <td>
+                <div class="action-btn-group">
+                  <button class="table-btn edit-user-btn">Edit</button>
+                  <button class="table-btn status-user-btn" disabled>Deactivate</button>
+                  <button class="table-btn delete-user-btn" disabled>Delete</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>USR1003</td>
+              <td>maria@email.com</td>
+              <td>Customer</td>
+              <td>Inactive</td>
+              <td>2025-09-10</td>
+              <td>
+                <div class="action-btn-group">
+                  <button class="table-btn edit-user-btn">Edit</button>
+                  <button class="table-btn status-user-btn">Activate</button>
+                  <button class="table-btn delete-user-btn">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <!-- Logout Modal -->
+  <div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+      <h3>Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="logout-modal-actions">
+        <button id="confirmLogoutBtn" class="modal-btn logout-confirm">Logout</button>
+        <button id="cancelLogoutBtn" class="modal-btn logout-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Logout modal logic
+    const logoutModal = document.getElementById('logoutModal');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+    const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+    logoutBtn.onclick = () => { logoutModal.classList.add('open'); document.body.style.overflow='hidden'; };
+    cancelLogoutBtn.onclick = () => { logoutModal.classList.remove('open'); document.body.style.overflow=''; };
+    logoutModal.onclick = (e) => { if (e.target === logoutModal) { logoutModal.classList.remove('open'); document.body.style.overflow=''; } };
+    confirmLogoutBtn.onclick = () => { logoutModal.classList.remove('open'); document.body.style.overflow=''; alert('Logged out! (UI Only)'); };
+
+    const burgerBtn = document.getElementById('burgerBtn');
+    const sideDrawer = document.getElementById('sideDrawer');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    function openDrawer(){ sideDrawer.classList.add('open'); drawerBackdrop.hidden=false; document.body.style.overflow='hidden'; burgerBtn.setAttribute('aria-expanded','true'); sideDrawer.setAttribute('aria-hidden','false'); }
+    function closeDrawer(){ sideDrawer.classList.remove('open'); drawerBackdrop.hidden=true; document.body.style.overflow=''; burgerBtn.setAttribute('aria-expanded','false'); sideDrawer.setAttribute('aria-hidden','true'); }
+    burgerBtn.onclick=openDrawer; drawerBackdrop.onclick=closeDrawer; sideDrawer.addEventListener('click',e=>{ if(e.target.tagName==='A') closeDrawer(); });
+
+    document.querySelectorAll('.table-btn').forEach(btn=>{
+      btn.onclick=()=>{
+        if(btn.classList.contains('edit-user-btn')) alert('Edit user (UI Only)');
+        else if(btn.classList.contains('delete-user-btn')) alert('Delete user (UI Only)');
+        else if(btn.classList.contains('status-user-btn')) alert('Change user status (UI Only)');
+      };
+    });
+  </script>
+</body>
+</html>
+

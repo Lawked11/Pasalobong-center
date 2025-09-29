@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Orders - Admin</title>
+  <link rel="stylesheet" href="admin_dashboard.css">
+  <link rel="stylesheet" href="orders.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <button id="burgerBtn" class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="sideDrawer">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="navbar-left">
+        <span class="admin-title">ORDER MONITORING</span>
+      </div>
+      <div class="navbar-right">
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+    </nav>
+  </header>
+  <aside id="sideDrawer" class="side-drawer" aria-hidden="true">
+    <div class="drawer-header">Menu</div>
+    <ul class="drawer-list">
+      <li><a href="admin_dashboard.html">Add Products</a></li>
+      <li><a href="inventory.html">Product Inventory & Monitoring</a></li>
+      <li><a href="users.html">User Accounts Management</a></li>
+      <li><a href="orders.html">Order Monitoring</a></li>
+    </ul>
+  </aside>
+  <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
+  <main>
+    <section class="dashboard-section">
+      <div class="monitor-section">
+        <h2>Order Monitoring</h2>
+        <table class="orders-table" id="ordersTable">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>User Email</th>
+              <th>Items</th>
+              <th>Total (₱)</th>
+              <th>Status</th>
+              <th>Timestamp</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ORD123456</td>
+              <td>juan@email.com</td>
+              <td>2x Tawalis<br>1x Ube Jam</td>
+              <td>₱300.00</td>
+              <td>Pending</td>
+              <td>2025-09-28 15:10</td>
+              <td>
+                <div class="action-btn-group">
+                  <button class="table-btn mark-btn">Mark Done</button>
+                  <button class="table-btn delete-order-btn">Delete</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>ORD123457</td>
+              <td>maria@email.com</td>
+              <td>3x Puto Cheese</td>
+              <td>₱180.00</td>
+              <td>Completed</td>
+              <td>2025-09-28 14:55</td>
+              <td>
+                <div class="action-btn-group">
+                  <button class="table-btn mark-btn" disabled>Mark Done</button>
+                  <button class="table-btn delete-order-btn">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <!-- Logout Modal -->
+  <div id="logoutModal" class="logout-modal">
+    <div class="logout-modal-content">
+      <h3>Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="logout-modal-actions">
+        <button id="confirmLogoutBtn" class="modal-btn logout-confirm">Logout</button>
+        <button id="cancelLogoutBtn" class="modal-btn logout-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Logout modal logic
+    const logoutModal = document.getElementById('logoutModal');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+    const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+    logoutBtn.onclick = () => { logoutModal.classList.add('open'); document.body.style.overflow='hidden'; };
+    cancelLogoutBtn.onclick = () => { logoutModal.classList.remove('open'); document.body.style.overflow=''; };
+    logoutModal.onclick = (e) => { if (e.target === logoutModal) { logoutModal.classList.remove('open'); document.body.style.overflow=''; } };
+    confirmLogoutBtn.onclick = () => { logoutModal.classList.remove('open'); document.body.style.overflow=''; alert('Logged out! (UI Only)'); };
+
+    const burgerBtn = document.getElementById('burgerBtn');
+    const sideDrawer = document.getElementById('sideDrawer');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    function openDrawer(){ sideDrawer.classList.add('open'); drawerBackdrop.hidden=false; document.body.style.overflow='hidden'; burgerBtn.setAttribute('aria-expanded','true'); sideDrawer.setAttribute('aria-hidden','false'); }
+    function closeDrawer(){ sideDrawer.classList.remove('open'); drawerBackdrop.hidden=true; document.body.style.overflow=''; burgerBtn.setAttribute('aria-expanded','false'); sideDrawer.setAttribute('aria-hidden','true'); }
+    burgerBtn.onclick=openDrawer; drawerBackdrop.onclick=closeDrawer; sideDrawer.addEventListener('click',e=>{ if(e.target.tagName==='A') closeDrawer(); });
+
+    document.querySelectorAll('.table-btn').forEach(btn=>{
+      btn.onclick=()=>{
+        if(btn.classList.contains('mark-btn')) alert('Order marked as Done! (UI Only)');
+        else if(btn.classList.contains('delete-order-btn')) alert('Order deleted! (UI Only)');
+      };
+    });
+  </script>
+</body>
+</html>
+
