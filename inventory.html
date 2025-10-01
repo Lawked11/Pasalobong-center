@@ -16,7 +16,6 @@
         <span class="admin-title">PRODUCT INVENTORY</span>
       </div>
       <div class="navbar-right">
-        <span id="adminEmail" class="admin-email"></span>
         <button id="logoutBtn" class="logout-btn">Logout</button>
       </div>
     </nav>
@@ -178,7 +177,6 @@
       console.log('👤 Auth state changed:', user ? user.email : 'No user');
       if (user) {
         currentUser = user;
-        document.getElementById('adminEmail').textContent = user.email;
         await loadProducts();
       } else {
         console.log('⚠️ No user logged in, redirecting...');

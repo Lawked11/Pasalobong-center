@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pasalobong Center - Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="home.css">
 </head>
 <body>
@@ -20,29 +23,55 @@
         PASALOBONG CENTER
       </div>
       <div class="navbar-right">
-        <button id="filterSortBtn" class="filter-sort-btn">
-          <span>⚙️</span> Filter & Sort
+        <button id="cartBtn" class="cart-btn" aria-label="Cart">
+          <span class="cart-icon" aria-hidden="true">🛒</span>
+          <span id="cartCount" class="cart-count" aria-live="polite">0</span>
         </button>
-        <button id="logoutBtn" class="logout-btn">Logout</button>
+        <div class="profile" id="profile">
+          <button id="profileIconBtn" class="profile-btn" aria-haspopup="true" aria-expanded="false" aria-label="Profile">
+            <span class="avatar" aria-hidden="true">P</span>
+            <span class="profile-caret" aria-hidden="true">▾</span>
+          </button>
+          <div class="profile-menu" id="profileMenu" role="menu">
+            <div class="profile-header">
+              <div class="avatar large">P</div>
+              <div class="profile-meta">
+                <div class="name" id="profileName">Guest</div>
+                <div class="email" id="profileEmail">guest@example.com</div>
+              </div>
+            </div>
+            <div class="profile-actions">
+              <a href="#" id="viewProfileLink" class="profile-link" role="menuitem">View Profile</a>
+              <button class="profile-link danger" id="profileLogout" role="menuitem">Logout</button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div id="mobileNav" class="mobile-nav">
-        <button class="close-mobile-nav" id="closeMobileNavBtn" aria-label="Close">&times;</button>
-        <ul>
+      <aside id="mobileNav" class="mobile-nav" aria-hidden="true">
+        <div class="drawer-header">Menu</div>
+        <ul class="drawer-list">
           <li><button id="filterSortBtnMobile" class="filter-sort-btn">Filter & Sort</button></li>
-          <li><a href="index.html">Back to Main Site</a></li>
-          <li><button id="logoutBtnMobile" class="logout-btn">Logout</button></li>
         </ul>
-      </div>
+      </aside>
+      <div id="mobileNavBackdrop" class="mobile-nav-backdrop" hidden></div>
     </nav>
   </header>
 
   <main>
-    <section class="welcome-section"></section>
+    <section class="welcome-section">
+      <div class="container hero">
+        <h1>Discover Authentic Pasalubong</h1>
+        <p>Curated local favorites, made with love. Shop fresh arrivals and timeless bestsellers.</p>
+        <a href="#products" class="cta-btn">Browse Products</a>
+      </div>
+    </section>
     
-    <section class="products-section">
-      <h2>Our Products</h2>
-      <div id="loadingSpinner" class="loading-spinner">Loading products...</div>
-      <div id="productsGrid" class="products-grid"></div>
+    <section class="products-section" id="products">
+      <div class="container">
+        <h2>Our Products</h2>
+        <div id="loadingSpinner" class="loading-spinner">Loading products...</div>
+        <div id="productsGrid" class="products-grid"></div>
+      </div>
     </section>
   </main>
 
@@ -109,6 +138,36 @@
       <div id="productModalContent"></div>
     </div>
   </div>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="product-modal">
+    <div class="modal-content product-modal-content cart-modal-content">
+      <button class="close-modal" id="closeCartModalBtn">&times;</button>
+      <h2>Your Cart</h2>
+      <div id="cartItems" class="cart-items"></div>
+      <div class="cart-summary">
+        <div class="cart-total">Total <span id="cartTotal">₱0.00</span></div>
+        <div class="cart-actions">
+          <button id="clearCartBtn" class="btn-secondary">Clear</button>
+          <button id="checkoutBtn" class="btn-primary">Checkout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generic Confirm Modal -->
+  <div id="confirmModal" class="confirm-modal" aria-hidden="true">
+    <div class="modal-content">
+      <h3 id="confirmTitle">Please Confirm</h3>
+      <p id="confirmMessage">Are you sure?</p>
+      <div class="logout-modal-actions">
+        <button id="confirmYesBtn" class="modal-btn logout-confirm">Yes</button>
+        <button id="confirmNoBtn" class="modal-btn logout-cancel">No</button>
+      </div>
+    </div>
+  </div>
+
+  
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
@@ -225,7 +284,8 @@
       orderBtn.onclick = (e) => {
         e.stopPropagation();
         if (product.stock > 0) {
-          alert(`Ordering ${product.name}. This will be connected to your cart system.`);
+          addToCart(product);
+          showConfirm('Added to cart. Open cart?', () => openCartModal());
         }
       };
       
@@ -366,7 +426,7 @@
         <div class="stock-info ${product.stock <= 0 ? 'out-of-stock' : ''}">
           ${product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'}
         </div>
-        <button class="order-btn" ${product.stock <= 0 ? 'disabled' : ''} onclick="orderProduct('${product.id}', '${product.name}')">
+        <button class="order-btn" ${product.stock <= 0 ? 'disabled' : ''} onclick="addToCartById('${product.id}')">
           ${product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
         </button>
       `;
@@ -375,10 +435,122 @@
       document.body.style.overflow = 'hidden';
     }
 
-    window.orderProduct = function(productId, productName) {
-      alert(`Adding ${productName} to cart. This will be connected to your cart system.`);
-      document.getElementById('productModal').classList.remove('open');
+    // Cart state and helpers
+    const cart = [];
+
+    function findCartItemIndex(productId) {
+      return cart.findIndex(ci => ci.id === productId);
+    }
+
+    function addToCart(product) {
+      const idx = findCartItemIndex(product.id);
+      if (idx >= 0) {
+        cart[idx].qty += 1;
+      } else {
+        cart.push({ id: product.id, name: product.name, price: parseFloat(product.price), imageUrl: product.imageUrl, qty: 1 });
+      }
+      updateCartUI();
+    }
+
+    window.addToCartById = function(productId) {
+      const product = allProducts.find(p => p.id === productId);
+      if (product && product.stock > 0) {
+        addToCart(product);
+        document.getElementById('productModal').classList.remove('open');
+        document.body.style.overflow = '';
+        showConfirm('Added to cart. Open cart?', () => openCartModal());
+      }
+    };
+
+    function removeFromCart(productId) {
+      const idx = findCartItemIndex(productId);
+      if (idx >= 0) {
+        cart.splice(idx, 1);
+        updateCartUI();
+      }
+    }
+
+    function changeQty(productId, delta) {
+      const idx = findCartItemIndex(productId);
+      if (idx >= 0) {
+        cart[idx].qty = Math.max(1, cart[idx].qty + delta);
+        updateCartUI();
+      }
+    }
+
+    function updateCartUI() {
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cartCount').textContent = count;
+      const cartItemsEl = document.getElementById('cartItems');
+      const cartTotalEl = document.getElementById('cartTotal');
+      if (!cartItemsEl || !cartTotalEl) return;
+
+      if (cart.length === 0) {
+        cartItemsEl.innerHTML = '<div class="no-products">Your cart is empty.</div>';
+        cartTotalEl.textContent = '₱0.00';
+        return;
+      }
+
+      let total = 0;
+      cartItemsEl.innerHTML = '';
+      cart.forEach(item => {
+        total += item.price * item.qty;
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        row.innerHTML = `
+          <img src="${item.imageUrl || 'images/placeholder.jpg'}" alt="${item.name}" onerror="this.src='images/placeholder.jpg'" />
+          <div class="ci-meta">
+            <div class="ci-name">${item.name}</div>
+            <div class="ci-price">₱${item.price.toFixed(2)}</div>
+          </div>
+          <div class="ci-qty">
+            <button class="qty-btn" data-id="${item.id}" data-delta="-1">−</button>
+            <span class="qty">${item.qty}</span>
+            <button class="qty-btn" data-id="${item.id}" data-delta="1">+</button>
+          </div>
+          <button class="ci-remove" data-id="${item.id}">×</button>
+        `;
+        cartItemsEl.appendChild(row);
+      });
+      cartTotalEl.textContent = `₱${total.toFixed(2)}`;
+
+      // Bind qty and remove buttons
+      cartItemsEl.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.onclick = () => changeQty(btn.getAttribute('data-id'), parseInt(btn.getAttribute('data-delta')));
+      });
+      cartItemsEl.querySelectorAll('.ci-remove').forEach(btn => {
+        btn.onclick = () => removeFromCart(btn.getAttribute('data-id'));
+      });
+    }
+
+    // Cart modal controls
+    const cartModal = document.getElementById('cartModal');
+    function openCartModal() {
+      cartModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeCartModal() {
+      cartModal.classList.remove('open');
       document.body.style.overflow = '';
+    }
+    document.getElementById('cartBtn').onclick = () => {
+      updateCartUI();
+      openCartModal();
+    };
+    document.getElementById('closeCartModalBtn').onclick = closeCartModal;
+    cartModal.onclick = (e) => { if (e.target.id === 'cartModal') closeCartModal(); };
+    document.getElementById('clearCartBtn').onclick = () => {
+      showConfirm('Clear all items in cart?', () => {
+        cart.length = 0;
+        updateCartUI();
+      });
+    };
+    document.getElementById('checkoutBtn').onclick = () => {
+      showConfirm('Proceed to checkout?', () => {
+        // Placeholder checkout flow
+        closeCartModal();
+        alert('Checkout coming soon.');
+      });
     };
 
     // Filter & Sort Modal Functions
@@ -393,7 +565,6 @@
     }
 
     // Event Listeners for Filter & Sort
-    document.getElementById('filterSortBtn').onclick = showFilterSortModal;
     document.getElementById('filterSortBtnMobile').onclick = () => {
       closeMobileNav();
       showFilterSortModal();
@@ -434,8 +605,6 @@
       document.body.style.overflow = '';
     }
 
-    document.getElementById('logoutBtn').onclick = showLogoutModal;
-    document.getElementById('logoutBtnMobile').onclick = showLogoutModal;
     document.getElementById('cancelLogoutBtn').onclick = closeLogoutModal;
 
     document.getElementById('confirmLogoutBtn').onclick = function() {
@@ -447,26 +616,27 @@
       if (e.target === logoutModal) closeLogoutModal();
     };
 
-    // Burger menu
+    // Burger menu / Drawer
     const burgerMenuBtn = document.getElementById('burgerMenuBtn');
     const mobileNav = document.getElementById('mobileNav');
-    const closeMobileNavBtn = document.getElementById('closeMobileNavBtn');
+    const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
     
     function openMobileNav() {
       mobileNav.classList.add('open');
+      mobileNav.setAttribute('aria-hidden', 'false');
+      mobileNavBackdrop.hidden = false;
       document.body.style.overflow = 'hidden';
     }
     
     function closeMobileNav() {
       mobileNav.classList.remove('open');
+      mobileNav.setAttribute('aria-hidden', 'true');
+      mobileNavBackdrop.hidden = true;
       document.body.style.overflow = '';
     }
     
     burgerMenuBtn.onclick = openMobileNav;
-    closeMobileNavBtn.onclick = closeMobileNav;
-    mobileNav.onclick = (e) => {
-      if (e.target === mobileNav) closeMobileNav();
-    };
+    mobileNavBackdrop.onclick = closeMobileNav;
     window.closeMobileNav = closeMobileNav;
 
     // Welcome Modal
@@ -478,6 +648,80 @@
       
       loadProducts();
     });
+    
+    // Profile dropdown (desktop)
+    const profileIconBtn = document.getElementById('profileIconBtn');
+    const profileMenu = document.getElementById('profileMenu');
+    const profileLogout = document.getElementById('profileLogout');
+    const viewProfileLink = document.getElementById('viewProfileLink');
+
+    function closeProfileMenu() {
+      profileMenu.classList.remove('open');
+      profileIconBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    profileIconBtn.onclick = (e) => {
+      e.stopPropagation();
+      const isOpen = profileMenu.classList.contains('open');
+      if (isOpen) {
+        closeProfileMenu();
+      } else {
+        profileMenu.classList.add('open');
+        profileIconBtn.setAttribute('aria-expanded', 'true');
+      }
+    };
+
+    document.addEventListener('click', (e) => {
+      if (!profileMenu.contains(e.target) && e.target !== profileIconBtn) {
+        closeProfileMenu();
+      }
+    });
+
+    profileLogout.onclick = () => {
+      closeProfileMenu();
+      showLogoutModal();
+    };
+
+    viewProfileLink.onclick = (e) => {
+      e.preventDefault();
+      closeProfileMenu();
+      showConfirm('Go to your profile page?', () => {
+        // Placeholder navigation; adjust when you have a profile page
+        window.location.href = 'users.html';
+      });
+    };
+
+    // Generic confirm modal helpers
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmMessage = document.getElementById('confirmMessage');
+    const confirmYesBtn = document.getElementById('confirmYesBtn');
+    const confirmNoBtn = document.getElementById('confirmNoBtn');
+    let confirmCallback = null;
+
+    function showConfirm(message, onConfirm) {
+      confirmMessage.textContent = message || 'Are you sure?';
+      confirmCallback = typeof onConfirm === 'function' ? onConfirm : null;
+      confirmModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeConfirm() {
+      confirmModal.classList.remove('open');
+      document.body.style.overflow = '';
+      confirmCallback = null;
+    }
+
+    window.showConfirm = showConfirm;
+
+    confirmYesBtn.onclick = () => {
+      const cb = confirmCallback;
+      closeConfirm();
+      if (cb) cb();
+    };
+    confirmNoBtn.onclick = closeConfirm;
+    confirmModal.onclick = (e) => {
+      if (e.target.id === 'confirmModal') closeConfirm();
+    };
     
     document.getElementById('closeWelcomeModalBtn').onclick = () => {
       document.getElementById('welcomeModal').classList.remove('open');
