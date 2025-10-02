@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shopping Cart - Pasalobong Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+      background: #f6f6f9;
+      color: #333;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    header {
+      background: #6A2C1A;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+      padding: 0 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .navbar-brand {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-decoration: none;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #fff;
+      color: #6A2C1A;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      background: #FFF3E0;
+      transform: translateY(-2px);
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .page-title {
+      color: #6A2C1A;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .cart-container {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .cart-items-section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .empty-cart {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #666;
+    }
+
+    .empty-cart-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    .empty-cart h3 {
+      color: #6A2C1A;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-cart p {
+      margin-bottom: 1.5rem;
+    }
+
+    .shop-btn {
+      display: inline-block;
+      background: #F9A825;
+      color: #6A2C1A;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .shop-btn:hover {
+      background: #6A2C1A;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 1rem;
+      padding: 1rem;
+      border: 2px solid #f0e2c6;
+      border-radius: 12px;
+      background: #fffef9;
+      margin-bottom: 1rem;
+      transition: all 0.2s;
+    }
+
+    .cart-item:hover {
+      border-color: #F9A825;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .cart-item-image {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #fff7e6;
+      padding: 8px;
+      border: 2px solid #ffe8b3;
+    }
+
+    .cart-item-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    .cart-item-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #6A2C1A;
+      line-height: 1.3;
+    }
+
+    .cart-item-price {
+      color: #F9A825;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .cart-item-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .quantity-selector {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #fff;
+      border: 2px solid #e8d7b7;
+      border-radius: 8px;
+      padding: 0.25rem;
+    }
+
+    .qty-btn {
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #6A2C1A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .qty-btn:hover {
+      background: #fff8e6;
+      color: #F9A825;
+    }
+
+    .qty-btn:active {
+      transform: scale(0.95);
+    }
+
+    .quantity-value {
+      min-width: 32px;
+      text-align: center;
+      font-weight: 700;
+      color: #6A2C1A;
+      font-size: 1rem;
+    }
+
+    .remove-btn {
+      border: 2px solid #f1d2d0;
+      background: #fff;
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #a2342b;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .remove-btn:hover {
+      background: #fdecea;
+      border-color: #a2342b;
+      transform: scale(1.05);
+    }
+
+    .order-summary {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 90px;
+    }
+
+    .summary-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #6A2C1A;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #f0e2c6;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    .summary-row.total {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #6A2C1A;
+      padding-top: 1rem;
+      border-top: 2px solid #f0e2c6;
+      margin-top: 1rem;
+    }
+
+    .summary-label {
+      color: #666;
+    }
+
+    .summary-value {
+      font-weight: 600;
+      color: #6A2C1A;
+    }
+
+    .summary-row.total .summary-value {
+      color: #F9A825;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      background: #F9A825;
+      color: #6A2C1A;
+      border: none;
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1.5rem;
+      box-shadow: 0 4px 12px rgba(249, 168, 37, 0.3);
+    }
+
+    .checkout-btn:hover {
+      background: #6A2C1A;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(106, 44, 26, 0.3);
+    }
+
+    .checkout-btn:disabled {
+      background: #ccc;
+      color: #666;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .clear-cart-btn {
+      width: 100%;
+      background: #fff;
+      color: #a2342b;
+      border: 2px solid #f1d2d0;
+      border-radius: 10px;
+      padding: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+
+    .clear-cart-btn:hover {
+      background: #fdecea;
+      border-color: #a2342b;
+    }
+
+    footer {
+      background: #6A2C1A;
+      color: #fff;
+      text-align: center;
+      padding: 1rem 0;
+      margin-top: auto;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      width: 100%;
+      border-top: 3px solid #F9A825;
+    }
+
+    /* Mobile Bottom Bar */
+    .mobile-bottom-bar {
+      display: none;
+    }
+
+    /* Confirm Modal */
+    .confirm-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      inset: 0;
+      background: rgba(42, 35, 31, 0.45);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .confirm-modal.open {
+      display: flex;
+      animation: fadeIn 0.2s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 12px 42px rgba(0, 0, 0, 0.17);
+      text-align: center;
+      min-width: 320px;
+      max-width: 400px;
+      animation: popIn 0.25s cubic-bezier(.71, -0.27, .5, 1.23);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-content h3 {
+      color: #6A2C1A;
+      margin-bottom: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .modal-btn {
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .modal-btn.confirm {
+      background: #F9A825;
+      color: #6A2C1A;
+    }
+
+    .modal-btn.confirm:hover {
+      background: #6A2C1A;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .modal-btn.cancel {
+      background: #eee;
+      color: #6A2C1A;
+    }
+
+    .modal-btn.cancel:hover {
+      background: #ddd;
+      transform: scale(1.05);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 968px) {
+      .cart-container {
+        grid-template-columns: 1fr;
+      }
+
+      .order-summary {
+        display: none;
+      }
+
+      .mobile-bottom-bar {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 99;
+        border-top: 2px solid #f0e2c6;
+      }
+
+      .mobile-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .mobile-total-label {
+        font-size: 1rem;
+        color: #666;
+      }
+
+      .mobile-total-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #F9A825;
+      }
+
+      main {
+        padding-bottom: 180px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .cart-item {
+        grid-template-columns: 60px 1fr;
+        gap: 0.75rem;
+      }
+
+      .cart-item-controls {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .cart-item-image {
+        width: 60px;
+        height: 60px;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a href="home.html" class="navbar-brand">PASALOBONG CENTER</a>
+      <a href="home.html" class="back-btn">
+        <span>←</span>
+        <span>Back to Shop</span>
+      </a>
+    </nav>
+  </header>
+
+  <main>
+    <h1 class="page-title">Shopping Cart</h1>
+
+    <div class="cart-container">
+      <!-- Cart Items Section -->
+      <div class="cart-items-section">
+        <div id="cartItemsList"></div>
+      </div>
+
+      <!-- Order Summary (Desktop) -->
+      <div class="order-summary">
+        <h2 class="summary-title">Order Summary</h2>
+        <div class="summary-row">
+          <span class="summary-label">Subtotal</span>
+          <span class="summary-value" id="subtotal">₱0.00</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Shipping</span>
+          <span class="summary-value">Free</span>
+        </div>
+        <div class="summary-row total">
+          <span class="summary-label">Total</span>
+          <span class="summary-value" id="total">₱0.00</span>
+        </div>
+        <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+        <button class="clear-cart-btn" id="clearCartBtn">Clear Cart</button>
+      </div>
+    </div>
+
+    <!-- Mobile Bottom Bar -->
+    <div class="mobile-bottom-bar">
+      <div class="mobile-summary">
+        <span class="mobile-total-label">Total:</span>
+        <span class="mobile-total-value" id="mobileTotal">₱0.00</span>
+      </div>
+      <button class="checkout-btn" id="mobileCheckoutBtn">Proceed to Checkout</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="year"></span> Pasalobong Center. All rights reserved.</p>
+  </footer>
+
+  <!-- Confirm Modal -->
+  <div id="confirmModal" class="confirm-modal">
+    <div class="modal-content">
+      <h3 id="confirmTitle">Confirm Action</h3>
+      <p id="confirmMessage">Are you sure?</p>
+      <div class="modal-actions">
+        <button class="modal-btn confirm" id="confirmYes">Yes</button>
+        <button class="modal-btn cancel" id="confirmNo">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD373HsUJ7jJsDZEKZQzaHGPAJglizaZY4",
+      authDomain: "pasalobong-486c3.firebaseapp.com",
+      projectId: "pasalobong-486c3",
+      storageBucket: "pasalobong-486c3.firebasestorage.app",
+      messagingSenderId: "157431097657",
+      appId: "1:157431097657:web:dc8afc6e6d18ada4a120e8",
+      measurementId: "G-Y13929E4XY"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let cartUnsubscribe = null;
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Auth state listener
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (user) {
+        loadCart(user.uid);
+      } else {
+        showEmptyCart();
+      }
+    });
+
+    function loadCart(uid) {
+      if (cartUnsubscribe) {
+        cartUnsubscribe();
+      }
+
+      const cartRef = collection(db, 'carts', uid, 'items');
+      cartUnsubscribe = onSnapshot(cartRef, (snapshot) => {
+        const cartItems = [];
+        snapshot.forEach((doc) => {
+          cartItems.push({ id: doc.id, ...doc.data() });
+        });
+        renderCart(cartItems);
+      });
+    }
+
+    function renderCart(items) {
+      const cartItemsList = document.getElementById('cartItemsList');
+
+      if (items.length === 0) {
+        showEmptyCart();
+        return;
+      }
+
+      let total = 0;
+      let html = '';
+
+      items.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        html += `
+          <div class="cart-item">
+            <img src="${item.imageUrl || 'images/placeholder.jpg'}" alt="${item.name}" class="cart-item-image" onerror="this.src='images/placeholder.jpg'">
+            <div class="cart-item-details">
+              <div class="cart-item-name">${item.name}</div>
+              <div class="cart-item-price">₱${item.price.toFixed(2)}</div>
+            </div>
+            <div class="cart-item-controls">
+              <div class="quantity-selector">
+                <button class="qty-btn" data-id="${item.id}" data-action="decrease">−</button>
+                <span class="quantity-value">${item.quantity}</span>
+                <button class="qty-btn" data-id="${item.id}" data-action="increase">+</button>
+              </div>
+              <button class="remove-btn" data-id="${item.id}">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+
+      cartItemsList.innerHTML = html;
+
+      // Update totals
+      const totalFormatted = `₱${total.toFixed(2)}`;
+      document.getElementById('subtotal').textContent = totalFormatted;
+      document.getElementById('total').textContent = totalFormatted;
+      document.getElementById('mobileTotal').textContent = totalFormatted;
+
+      // Attach event listeners
+      document.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.onclick = () => updateQuantity(btn.dataset.id, btn.dataset.action);
+      });
+
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.onclick = () => removeItem(btn.dataset.id);
+      });
+    }
+
+    function showEmptyCart() {
+      const cartItemsList = document.getElementById('cartItemsList');
+      cartItemsList.innerHTML = `
+        <div class="empty-cart">
+          <div class="empty-cart-icon">🛒</div>
+          <h3>Your cart is empty</h3>
+          <p>Add some delicious pasalubong to get started!</p>
+          <a href="home.html" class="shop-btn">Continue Shopping</a>
+        </div>
+      `;
+
+      document.getElementById('subtotal').textContent = '₱0.00';
+      document.getElementById('total').textContent = '₱0.00';
+      document.getElementById('mobileTotal').textContent = '₱0.00';
+    }
+
+    async function updateQuantity(itemId, action) {
+      if (!currentUser) return;
+
+      try {
+        const itemRef = doc(db, 'carts', currentUser.uid, 'items', itemId);
+        const itemDoc = await getDoc(itemRef);
+
+        if (itemDoc.exists()) {
+          const currentQty = itemDoc.data().quantity || 1;
+          const newQty = action === 'increase' ? currentQty + 1 : Math.max(1, currentQty - 1);
+          await updateDoc(itemRef, { quantity: newQty });
+        }
+      } catch (error) {
+        console.error('Error updating quantity:', error);
+      }
+    }
+
+    async function removeItem(itemId) {
+      showConfirm('Remove this item from cart?', async () => {
+        if (!currentUser) return;
+
+        try {
+          const itemRef = doc(db, 'carts', currentUser.uid, 'items', itemId);
+          await deleteDoc(itemRef);
+        } catch (error) {
+          console.error('Error removing item:', error);
+        }
+      });
+    }
+
+    async function clearCart() {
+      showConfirm('Clear all items from cart?', async () => {
+        if (!currentUser) return;
+
+        try {
+          const cartRef = collection(db, 'carts', currentUser.uid, 'items');
+          const snapshot = await getDocs(cartRef);
+          const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
+          await Promise.all(deletePromises);
+        } catch (error) {
+          console.error('Error clearing cart:', error);
+        }
+      });
+    }
+
+    function checkout() {
+      showConfirm('Proceed to checkout?', () => {
+        alert('Checkout functionality coming soon!');
+      });
+    }
+
+    // Event listeners
+    document.getElementById('clearCartBtn').onclick = clearCart;
+    document.getElementById('checkoutBtn').onclick = checkout;
+    document.getElementById('mobileCheckoutBtn').onclick = checkout;
+
+    // Confirm modal
+    const confirmModal = document.getElementById('confirmModal');
+    let confirmCallback = null;
+
+    function showConfirm(message, onConfirm) {
+      document.getElementById('confirmMessage').textContent = message;
+      confirmCallback = onConfirm;
+      confirmModal.classList.add('open');
+    }
+
+    function closeConfirm() {
+      confirmModal.classList.remove('open');
+      confirmCallback = null;
+    }
+
+    document.getElementById('confirmYes').onclick = () => {
+      const cb = confirmCallback;
+      closeConfirm();
+      if (cb) cb();
+    };
+
+    document.getElementById('confirmNo').onclick = closeConfirm;
+    confirmModal.onclick = (e) => {
+      if (e.target === confirmModal) closeConfirm();
+    };
+  </script>
+</body>
+</html>
