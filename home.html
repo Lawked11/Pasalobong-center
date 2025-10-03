@@ -888,12 +888,12 @@
         </a>
         <div class="profile" id="profile">
           <button id="profileIconBtn" class="profile-btn" aria-haspopup="true" aria-expanded="false" aria-label="Profile">
-            <span class="avatar" aria-hidden="true">P</span>
+            <span class="avatar" aria-hidden="true">G</span>
             <span class="profile-caret" aria-hidden="true">▾</span>
           </button>
           <div class="profile-menu" id="profileMenu" role="menu">
             <div class="profile-header">
-              <div class="avatar large">P</div>
+              <div class="avatar large">G</div>
               <div class="profile-meta">
                 <div class="name" id="profileName">Guest</div>
                 <div class="email" id="profileEmail">guest@example.com</div>
@@ -1012,23 +1012,9 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyD373HsUJ7jJsDZEKZQzaHGPAJglizaZY4",
-      authDomain: "pasalobong-486c3.firebaseapp.com",
-      projectId: "pasalobong-486c3",
-      storageBucket: "pasalobong-486c3.firebasestorage.app",
-      messagingSenderId: "157431097657",
-      appId: "1:157431097657:web:dc8afc6e6d18ada4a120e8",
-      measurementId: "G-Y13929E4XY"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    import { auth, db } from './firebase.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     // Global variables
     let allProducts = [];
@@ -1045,10 +1031,37 @@
       currentUser = user;
       if (user) {
         loadCartFromFirestore(user.uid);
+        updateProfileUI(user);
       } else {
         updateCartUI([]);
+        updateProfileUI(null);
       }
     });
+
+    // Update profile UI with user data
+    function updateProfileUI(user) {
+      const profileName = document.getElementById('profileName');
+      const profileEmail = document.getElementById('profileEmail');
+      const avatars = document.querySelectorAll('.avatar');
+      
+      if (user) {
+        const displayName = user.displayName || user.email.split('@')[0];
+        const email = user.email;
+        const initial = displayName.charAt(0).toUpperCase();
+        
+        profileName.textContent = displayName;
+        profileEmail.textContent = email;
+        avatars.forEach(avatar => {
+          avatar.textContent = initial;
+        });
+      } else {
+        profileName.textContent = 'Guest';
+        profileEmail.textContent = 'guest@example.com';
+        avatars.forEach(avatar => {
+          avatar.textContent = 'G';
+        });
+      }
+    }
 
     // Load products from Firestore
     async function loadProducts() {

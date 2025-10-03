@@ -90,17 +90,116 @@
     }
 
     .cart-container {
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 2rem;
-      align-items: start;
+      max-width: 900px;
+      margin: 0 auto;
     }
 
-    .cart-items-section {
+    .checkout-card {
       background: #fff;
       border-radius: 16px;
-      padding: 1.5rem;
+      padding: 2rem;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #6A2C1A;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid #f0e2c6;
+    }
+
+    .section:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #6A2C1A;
+    }
+
+    .edit-btn {
+      background: transparent;
+      color: #F9A825;
+      border: 2px solid #F9A825;
+      border-radius: 6px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .edit-btn:hover {
+      background: #F9A825;
+      color: #6A2C1A;
+    }
+
+    .shipping-info {
+      background: #fffef9;
+      border: 2px solid #f0e2c6;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .shipping-info p {
+      margin: 0.5rem 0;
+      color: #666;
+    }
+
+    .shipping-info strong {
+      color: #6A2C1A;
+      font-weight: 600;
+    }
+
+    .no-shipping-info {
+      background: #fff8e6;
+      border: 2px solid #F9A825;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .no-shipping-info p {
+      margin: 0 0 1rem 0;
+      color: #6A2C1A;
+      font-weight: 600;
+    }
+
+    .add-info-btn {
+      display: inline-block;
+      background: #F9A825;
+      color: #6A2C1A;
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .add-info-btn:hover {
+      background: #6A2C1A;
+      color: #fff;
+      transform: translateY(-2px);
     }
 
     .empty-cart {
@@ -141,9 +240,31 @@
       transform: translateY(-2px);
     }
 
+    .select-all-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background: #fff8e6;
+      border-radius: 6px;
+    }
+
+    .select-all-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .select-all-row label {
+      font-weight: 600;
+      color: #6A2C1A;
+      cursor: pointer;
+    }
+
     .cart-item {
       display: grid;
-      grid-template-columns: 80px 1fr auto;
+      grid-template-columns: auto 80px 1fr auto;
       gap: 1rem;
       padding: 1rem;
       border: 2px solid #f0e2c6;
@@ -151,11 +272,24 @@
       background: #fffef9;
       margin-bottom: 1rem;
       transition: all 0.2s;
+      align-items: center;
     }
 
     .cart-item:hover {
       border-color: #F9A825;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .cart-item-checkbox {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cart-item-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
     }
 
     .cart-item-image {
@@ -260,22 +394,31 @@
       transform: scale(1.05);
     }
 
-    .order-summary {
-      background: #fff;
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-      position: sticky;
-      top: 90px;
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #fffef9;
+      border: 2px solid #f0e2c6;
+      border-radius: 8px;
+      padding: 1rem;
     }
 
-    .summary-title {
-      font-size: 1.3rem;
-      font-weight: 700;
+    .payment-method input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .payment-method label {
+      font-weight: 600;
       color: #6A2C1A;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 2px solid #f0e2c6;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .payment-icon {
+      font-size: 1.5rem;
     }
 
     .summary-row {
@@ -318,11 +461,10 @@
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
-      margin-top: 1.5rem;
       box-shadow: 0 4px 12px rgba(249, 168, 37, 0.3);
     }
 
-    .checkout-btn:hover {
+    .checkout-btn:hover:not(:disabled) {
       background: #6A2C1A;
       color: #fff;
       transform: translateY(-2px);
@@ -337,25 +479,6 @@
       box-shadow: none;
     }
 
-    .clear-cart-btn {
-      width: 100%;
-      background: #fff;
-      color: #a2342b;
-      border: 2px solid #f1d2d0;
-      border-radius: 10px;
-      padding: 0.75rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 1rem;
-    }
-
-    .clear-cart-btn:hover {
-      background: #fdecea;
-      border-color: #a2342b;
-    }
-
     footer {
       background: #6A2C1A;
       color: #fff;
@@ -368,12 +491,6 @@
       border-top: 3px solid #F9A825;
     }
 
-    /* Mobile Bottom Bar */
-    .mobile-bottom-bar {
-      display: none;
-    }
-
-    /* Confirm Modal */
     .confirm-modal {
       display: none;
       position: fixed;
@@ -452,55 +569,19 @@
       transform: scale(1.05);
     }
 
-    /* Responsive Design */
     @media (max-width: 968px) {
-      .cart-container {
-        grid-template-columns: 1fr;
+      .checkout-card {
+        padding: 1.5rem;
       }
 
-      .order-summary {
-        display: none;
-      }
-
-      .mobile-bottom-bar {
-        display: block;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: #fff;
-        padding: 1rem 1.5rem;
-        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-        z-index: 99;
-        border-top: 2px solid #f0e2c6;
-      }
-
-      .mobile-summary {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-      }
-
-      .mobile-total-label {
-        font-size: 1rem;
-        color: #666;
-      }
-
-      .mobile-total-value {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: #F9A825;
-      }
-
-      main {
-        padding-bottom: 180px;
+      .card-title {
+        font-size: 1.3rem;
       }
     }
 
     @media (max-width: 600px) {
       .cart-item {
-        grid-template-columns: 60px 1fr;
+        grid-template-columns: auto 50px 1fr;
         gap: 0.75rem;
       }
 
@@ -509,15 +590,22 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        padding-top: 0.5rem;
+        margin-top: 0.5rem;
+        border-top: 1px solid #f0e2c6;
       }
 
       .cart-item-image {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
       }
 
       .page-title {
         font-size: 1.5rem;
+      }
+
+      .checkout-card {
+        padding: 1rem;
       }
     }
   </style>
@@ -537,38 +625,72 @@
     <h1 class="page-title">Shopping Cart</h1>
 
     <div class="cart-container">
-      <!-- Cart Items Section -->
-      <div class="cart-items-section">
-        <div id="cartItemsList"></div>
-      </div>
+      <div class="checkout-card">
+        <h2 class="card-title">Shopping Information</h2>
 
-      <!-- Order Summary (Desktop) -->
-      <div class="order-summary">
-        <h2 class="summary-title">Order Summary</h2>
-        <div class="summary-row">
-          <span class="summary-label">Subtotal</span>
-          <span class="summary-value" id="subtotal">₱0.00</span>
+        <!-- Shipping Information Section -->
+        <div class="section">
+          <div class="section-header">
+            <h3 class="section-title">Shipping Information</h3>
+            <a href="profile.html" class="edit-btn" id="editShippingBtn" style="display: none;">Edit</a>
+          </div>
+          <div id="shippingDisplay" style="display: none;">
+            <div class="shipping-info">
+              <p><strong>Name:</strong> <span id="displayName"></span></p>
+              <p><strong>Phone:</strong> <span id="displayPhone"></span></p>
+              <p><strong>Address:</strong> <span id="displayAddress"></span></p>
+            </div>
+          </div>
+          <div id="noShippingInfo" style="display: none;">
+            <div class="no-shipping-info">
+              <p>No shipping information found</p>
+              <a href="profile.html" class="add-info-btn">Add Shipping Information</a>
+            </div>
+          </div>
         </div>
-        <div class="summary-row">
-          <span class="summary-label">Shipping</span>
-          <span class="summary-value">Free</span>
-        </div>
-        <div class="summary-row total">
-          <span class="summary-label">Total</span>
-          <span class="summary-value" id="total">₱0.00</span>
-        </div>
-        <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
-        <button class="clear-cart-btn" id="clearCartBtn">Clear Cart</button>
-      </div>
-    </div>
 
-    <!-- Mobile Bottom Bar -->
-    <div class="mobile-bottom-bar">
-      <div class="mobile-summary">
-        <span class="mobile-total-label">Total:</span>
-        <span class="mobile-total-value" id="mobileTotal">₱0.00</span>
+        <!-- Cart Products Section -->
+        <div class="section">
+          <div class="section-header">
+            <h3 class="section-title">Cart Products</h3>
+          </div>
+          <div id="cartProductsArea"></div>
+        </div>
+
+        <!-- Payment Method Section -->
+        <div class="section">
+          <div class="section-header">
+            <h3 class="section-title">Payment Method</h3>
+          </div>
+          <div class="payment-method">
+            <input type="radio" id="cod" name="payment" value="cod" checked>
+            <label for="cod">Cash on Delivery</label>
+            <span class="payment-icon">💵</span>
+          </div>
+        </div>
+
+        <!-- Summary & Checkout Section -->
+        <div class="section">
+          <h3 class="section-title">Order Summary</h3>
+          <div class="summary-row">
+            <span class="summary-label">Selected Items</span>
+            <span class="summary-value" id="selectedCount">0</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Subtotal</span>
+            <span class="summary-value" id="subtotal">₱0.00</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Shipping</span>
+            <span class="summary-value">Free</span>
+          </div>
+          <div class="summary-row total">
+            <span class="summary-label">Total</span>
+            <span class="summary-value" id="total">₱0.00</span>
+          </div>
+          <button class="checkout-btn" id="checkoutBtn" disabled>Proceed to Checkout</button>
+        </div>
       </div>
-      <button class="checkout-btn" id="mobileCheckoutBtn">Proceed to Checkout</button>
     </div>
   </main>
 
@@ -579,7 +701,7 @@
   <!-- Confirm Modal -->
   <div id="confirmModal" class="confirm-modal">
     <div class="modal-content">
-      <h3 id="confirmTitle">Confirm Action</h3>
+      <h3>Confirm Action</h3>
       <p id="confirmMessage">Are you sure?</p>
       <div class="modal-actions">
         <button class="modal-btn confirm" id="confirmYes">Yes</button>
@@ -591,7 +713,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyD373HsUJ7jJsDZEKZQzaHGPAJglizaZY4",
@@ -609,6 +731,8 @@
 
     let currentUser = null;
     let cartUnsubscribe = null;
+    let cartItems = [];
+    let selectedItems = new Set();
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -617,6 +741,7 @@
       currentUser = user;
       if (user) {
         loadCart(user.uid);
+        loadShippingInfo(user.uid);
       } else {
         showEmptyCart();
       }
@@ -629,7 +754,7 @@
 
       const cartRef = collection(db, 'carts', uid, 'items');
       cartUnsubscribe = onSnapshot(cartRef, (snapshot) => {
-        const cartItems = [];
+        cartItems = [];
         snapshot.forEach((doc) => {
           cartItems.push({ id: doc.id, ...doc.data() });
         });
@@ -637,23 +762,55 @@
       });
     }
 
+    async function loadShippingInfo(uid) {
+      try {
+        const shippingRef = doc(db, 'users', uid, 'shipping', 'info');
+        const shippingDoc = await getDoc(shippingRef);
+        
+        if (shippingDoc.exists()) {
+          const data = shippingDoc.data();
+          document.getElementById('displayName').textContent = data.name || '';
+          document.getElementById('displayPhone').textContent = data.phone || '';
+          document.getElementById('displayAddress').textContent = data.address || '';
+          
+          document.getElementById('shippingDisplay').style.display = 'block';
+          document.getElementById('noShippingInfo').style.display = 'none';
+          document.getElementById('editShippingBtn').style.display = 'block';
+        } else {
+          document.getElementById('shippingDisplay').style.display = 'none';
+          document.getElementById('noShippingInfo').style.display = 'block';
+          document.getElementById('editShippingBtn').style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error loading shipping info:', error);
+        document.getElementById('shippingDisplay').style.display = 'none';
+        document.getElementById('noShippingInfo').style.display = 'block';
+        document.getElementById('editShippingBtn').style.display = 'none';
+      }
+    }
+
     function renderCart(items) {
-      const cartItemsList = document.getElementById('cartItemsList');
+      const cartProductsArea = document.getElementById('cartProductsArea');
 
       if (items.length === 0) {
         showEmptyCart();
         return;
       }
 
-      let total = 0;
-      let html = '';
+      let html = `
+        <div class="select-all-row">
+          <input type="checkbox" id="selectAll">
+          <label for="selectAll">Select All</label>
+        </div>
+      `;
 
       items.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-
+        const isSelected = selectedItems.has(item.id);
         html += `
           <div class="cart-item">
+            <div class="cart-item-checkbox">
+              <input type="checkbox" class="item-checkbox" data-id="${item.id}" ${isSelected ? 'checked' : ''}>
+            </div>
             <img src="${item.imageUrl || 'images/placeholder.jpg'}" alt="${item.name}" class="cart-item-image" onerror="this.src='images/placeholder.jpg'">
             <div class="cart-item-details">
               <div class="cart-item-name">${item.name}</div>
@@ -671,15 +828,34 @@
         `;
       });
 
-      cartItemsList.innerHTML = html;
+      cartProductsArea.innerHTML = html;
+      updateSummary();
 
-      // Update totals
-      const totalFormatted = `₱${total.toFixed(2)}`;
-      document.getElementById('subtotal').textContent = totalFormatted;
-      document.getElementById('total').textContent = totalFormatted;
-      document.getElementById('mobileTotal').textContent = totalFormatted;
+      document.getElementById('selectAll').onchange = (e) => {
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        checkboxes.forEach(cb => {
+          cb.checked = e.target.checked;
+          if (e.target.checked) {
+            selectedItems.add(cb.dataset.id);
+          } else {
+            selectedItems.delete(cb.dataset.id);
+          }
+        });
+        updateSummary();
+      };
 
-      // Attach event listeners
+      document.querySelectorAll('.item-checkbox').forEach(cb => {
+        cb.onchange = (e) => {
+          if (e.target.checked) {
+            selectedItems.add(e.target.dataset.id);
+          } else {
+            selectedItems.delete(e.target.dataset.id);
+          }
+          updateSelectAllState();
+          updateSummary();
+        };
+      });
+
       document.querySelectorAll('.qty-btn').forEach(btn => {
         btn.onclick = () => updateQuantity(btn.dataset.id, btn.dataset.action);
       });
@@ -687,11 +863,43 @@
       document.querySelectorAll('.remove-btn').forEach(btn => {
         btn.onclick = () => removeItem(btn.dataset.id);
       });
+
+      updateSelectAllState();
+    }
+
+    function updateSelectAllState() {
+      const selectAllCheckbox = document.getElementById('selectAll');
+      const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+      
+      if (itemCheckboxes.length === 0) return;
+      
+      const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
+      selectAllCheckbox.checked = allChecked;
+    }
+
+    function updateSummary() {
+      let total = 0;
+      let count = 0;
+
+      cartItems.forEach(item => {
+        if (selectedItems.has(item.id)) {
+          total += item.price * item.quantity;
+          count++;
+        }
+      });
+
+      const totalFormatted = `₱${total.toFixed(2)}`;
+      document.getElementById('selectedCount').textContent = count;
+      document.getElementById('subtotal').textContent = totalFormatted;
+      document.getElementById('total').textContent = totalFormatted;
+
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      checkoutBtn.disabled = selectedItems.size === 0;
     }
 
     function showEmptyCart() {
-      const cartItemsList = document.getElementById('cartItemsList');
-      cartItemsList.innerHTML = `
+      const cartProductsArea = document.getElementById('cartProductsArea');
+      cartProductsArea.innerHTML = `
         <div class="empty-cart">
           <div class="empty-cart-icon">🛒</div>
           <h3>Your cart is empty</h3>
@@ -700,9 +908,10 @@
         </div>
       `;
 
+      document.getElementById('selectedCount').textContent = '0';
       document.getElementById('subtotal').textContent = '₱0.00';
       document.getElementById('total').textContent = '₱0.00';
-      document.getElementById('mobileTotal').textContent = '₱0.00';
+      document.getElementById('checkoutBtn').disabled = true;
     }
 
     async function updateQuantity(itemId, action) {
@@ -729,37 +938,63 @@
         try {
           const itemRef = doc(db, 'carts', currentUser.uid, 'items', itemId);
           await deleteDoc(itemRef);
+          selectedItems.delete(itemId);
         } catch (error) {
           console.error('Error removing item:', error);
         }
       });
     }
 
-    async function clearCart() {
-      showConfirm('Clear all items from cart?', async () => {
-        if (!currentUser) return;
+    async function checkout() {
+      if (!currentUser) {
+        alert('Please log in to proceed with checkout.');
+        return;
+      }
 
+      if (selectedItems.size === 0) {
+        alert('Please select at least one item to checkout.');
+        return;
+      }
+
+      // Check if shipping info exists
+      const shippingDisplay = document.getElementById('shippingDisplay');
+      if (shippingDisplay.style.display === 'none') {
+        alert('Please save your shipping information before checking out.');
+        return;
+      }
+
+      const selectedProducts = cartItems.filter(item => selectedItems.has(item.id));
+      
+      showConfirm(`Proceed to checkout with ${selectedProducts.length} item(s)?`, async () => {
         try {
-          const cartRef = collection(db, 'carts', currentUser.uid, 'items');
-          const snapshot = await getDocs(cartRef);
-          const deletePromises = snapshot.docs.map(doc => deleteDoc(doc.ref));
-          await Promise.all(deletePromises);
+          // Get shipping info
+          const name = document.getElementById('displayName').textContent;
+          const phone = document.getElementById('displayPhone').textContent;
+          const address = document.getElementById('displayAddress').textContent;
+
+          const orderData = {
+            items: selectedProducts,
+            shippingInfo: { name, phone, address },
+            paymentMethod: 'Cash on Delivery',
+            total: document.getElementById('total').textContent,
+            timestamp: new Date().toISOString()
+          };
+
+          console.log('Order data:', orderData);
+          
+          // TODO: Save order to Firestore and remove selected items from cart
+          alert('Checkout functionality coming soon! Your order has been logged to the console.');
         } catch (error) {
-          console.error('Error clearing cart:', error);
+          console.error('Error during checkout:', error);
+          alert('Error processing checkout. Please try again.');
         }
       });
     }
 
-    function checkout() {
-      showConfirm('Proceed to checkout?', () => {
-        alert('Checkout functionality coming soon!');
-      });
-    }
-
     // Event listeners
-    document.getElementById('clearCartBtn').onclick = clearCart;
+    document.getElementById('saveShippingBtn').onclick = saveShippingInfo;
+    document.getElementById('editShippingBtn').onclick = editShippingInfo;
     document.getElementById('checkoutBtn').onclick = checkout;
-    document.getElementById('mobileCheckoutBtn').onclick = checkout;
 
     // Confirm modal
     const confirmModal = document.getElementById('confirmModal');
