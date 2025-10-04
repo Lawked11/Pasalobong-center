@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile - Pasalobong Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="navbar-center">
+        <span class="nav-title">User Profile</span>
+      </div>
+      <div class="navbar-right">
+        <a href="home.html" class="back-btn" aria-label="Back to Shop">
+          <span class="back-icon">←</span>
+          <span class="back-text">Back to Shop</span>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="profile-section">
+        <div class="profile-header-section">
+          <div class="profile-avatar-section">
+            <div class="avatar-large">
+              <span id="userInitial">G</span>
+            </div>
+            <button class="change-photo-btn" id="changePhotoBtn">Change Photo</button>
+          </div>
+          <div class="profile-info">
+            <h1 id="userDisplayName">Guest User</h1>
+            <p id="userEmail">guest@example.com</p>
+            <div class="account-status">
+              <span class="status-badge active">Active Account</span>
+              <span class="member-since">Member since <span id="memberSince">2024</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-content">
+          <div class="profile-tabs">
+            <button class="tab-btn active" data-tab="personal">Personal Information</button>
+            <button class="tab-btn" data-tab="shipping">Shipping Address</button>
+            <button class="tab-btn" data-tab="orders">Order History</button>
+            <button class="tab-btn" data-tab="security">Security</button>
+          </div>
+
+          <div class="tab-content">
+            <!-- Personal Information Tab -->
+            <div class="tab-panel active" id="personal-tab">
+              <div class="form-section">
+                <h2>Personal Information</h2>
+                <form id="personalForm" class="profile-form">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="firstName">First Name</label>
+                      <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="lastName">Last Name</label>
+                      <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required readonly>
+                    <small class="form-help">Email cannot be changed</small>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+63 9XX XXX XXXX">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="birthDate">Date of Birth</label>
+                    <input type="date" id="birthDate" name="birthDate">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender">
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                      <option value="prefer-not-to-say">Prefer not to say</option>
+                    </select>
+                  </div>
+
+                  <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Shipping Address Tab -->
+            <div class="tab-panel" id="shipping-tab">
+              <div class="form-section">
+                <h2>Shipping Address</h2>
+                <form id="shippingForm" class="profile-form">
+                  <div class="form-group">
+                    <label for="addressLine1">Address Line 1</label>
+                    <input type="text" id="addressLine1" name="addressLine1" placeholder="Street address, P.O. box, company name, c/o">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="addressLine2">Address Line 2</label>
+                    <input type="text" id="addressLine2" name="addressLine2" placeholder="Apartment, suite, unit, building, floor, etc.">
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="city">City</label>
+                      <input type="text" id="city" name="city">
+                    </div>
+                    <div class="form-group">
+                      <label for="province">Province</label>
+                      <input type="text" id="province" name="province">
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="postalCode">Postal Code</label>
+                      <input type="text" id="postalCode" name="postalCode" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                      <label for="country">Country</label>
+                      <select id="country" name="country">
+                        <option value="Philippines" selected>Philippines</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="defaultShipping" name="defaultShipping">
+                      <span class="checkmark"></span>
+                      Set as default shipping address
+                    </label>
+                  </div>
+
+                  <button type="submit" class="save-btn">Save Address</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Order History Tab -->
+            <div class="tab-panel" id="orders-tab">
+              <div class="form-section">
+                <h2>Order History</h2>
+                <div class="orders-container">
+                  <div class="orders-filter">
+                    <select id="orderFilter">
+                      <option value="all">All Orders</option>
+                      <option value="pending">Pending</option>
+                      <option value="processing">Processing</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </div>
+                  <div id="ordersList" class="orders-list">
+                    <div class="no-orders">
+                      <div class="no-orders-icon">📦</div>
+                      <h3>No orders yet</h3>
+                      <p>Start shopping to see your order history here</p>
+                      <a href="home.html" class="shop-btn">Start Shopping</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Security Tab -->
+            <div class="tab-panel" id="security-tab">
+              <div class="form-section">
+                <h2>Security Settings</h2>
+                
+                <div class="security-section">
+                  <h3>Change Password</h3>
+                  <form id="passwordForm" class="profile-form">
+                    <div class="form-group">
+                      <label for="currentPassword">Current Password</label>
+                      <input type="password" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="newPassword">New Password</label>
+                      <input type="password" id="newPassword" name="newPassword" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                      <label for="confirmPassword">Confirm New Password</label>
+                      <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="save-btn">Change Password</button>
+                  </form>
+                </div>
+
+                <div class="security-section">
+                  <h3>Account Security</h3>
+                  <div class="security-options">
+                    <div class="security-item">
+                      <div class="security-info">
+                        <h4>Two-Factor Authentication</h4>
+                        <p>Add an extra layer of security to your account</p>
+                      </div>
+                      <button class="toggle-btn" id="toggle2FA">Enable</button>
+                    </div>
+                    <div class="security-item">
+                      <div class="security-info">
+                        <h4>Login Notifications</h4>
+                        <p>Get notified when someone logs into your account</p>
+                      </div>
+                      <button class="toggle-btn active" id="toggleNotifications">Enabled</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Logout Modal -->
+  <div id="logoutModal" class="logout-modal">
+    <div class="modal-content">
+      <h3>Confirm Logout</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="logout-modal-actions">
+        <button id="confirmLogoutBtn" class="modal-btn logout-confirm">Logout</button>
+        <button id="cancelLogoutBtn" class="modal-btn logout-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success/Error Toast -->
+  <div id="toast" class="toast">
+    <span id="toastMessage"></span>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './firebase.js';
+    import { onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { doc, getDoc, setDoc, updateDoc, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    // Global variables
+    let currentUser = null;
+    let userProfile = null;
+
+    // Auth state listener
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        await loadUserProfile(user.uid);
+        updateProfileUI(user);
+        loadOrderHistory(user.uid);
+      } else {
+        // Redirect to home if not logged in
+        window.location.href = 'home.html';
+      }
+    });
+
+    // Load user profile data
+    async function loadUserProfile(uid) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', uid));
+        if (userDoc.exists()) {
+          userProfile = userDoc.data();
+          populateForms(userProfile);
+        } else {
+          // Create default profile
+          userProfile = {
+            firstName: '',
+            lastName: '',
+            phone: '',
+            birthDate: '',
+            gender: '',
+            addressLine1: '',
+            addressLine2: '',
+            city: '',
+            province: '',
+            postalCode: '',
+            country: 'Philippines',
+            defaultShipping: false,
+            memberSince: new Date().toISOString()
+          };
+          await setDoc(doc(db, 'users', uid), userProfile);
+        }
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+        showToast('Failed to load profile data', 'error');
+      }
+    }
+
+    // Populate forms with user data
+    function populateForms(profile) {
+      document.getElementById('firstName').value = profile.firstName || '';
+      document.getElementById('lastName').value = profile.lastName || '';
+      document.getElementById('email').value = currentUser.email;
+      document.getElementById('phone').value = profile.phone || '';
+      document.getElementById('birthDate').value = profile.birthDate || '';
+      document.getElementById('gender').value = profile.gender || '';
+      
+      document.getElementById('addressLine1').value = profile.addressLine1 || '';
+      document.getElementById('addressLine2').value = profile.addressLine2 || '';
+      document.getElementById('city').value = profile.city || '';
+      document.getElementById('province').value = profile.province || '';
+      document.getElementById('postalCode').value = profile.postalCode || '';
+      document.getElementById('country').value = profile.country || 'Philippines';
+      document.getElementById('defaultShipping').checked = profile.defaultShipping || false;
+
+      // Update display name and member since
+      const displayName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || currentUser.email.split('@')[0];
+      document.getElementById('userDisplayName').textContent = displayName;
+      document.getElementById('memberSince').textContent = new Date(profile.memberSince || currentUser.metadata.creationTime).getFullYear();
+    }
+
+    // Update profile UI
+    function updateProfileUI(user) {
+      const profileName = document.getElementById('profileName');
+      const profileEmail = document.getElementById('profileEmail');
+      const avatars = document.querySelectorAll('.avatar');
+      const userInitial = document.getElementById('userInitial');
+      
+      const displayName = user.displayName || user.email.split('@')[0];
+      const email = user.email;
+      const initial = displayName.charAt(0).toUpperCase();
+      
+      profileName.textContent = displayName;
+      profileEmail.textContent = email;
+      userInitial.textContent = initial;
+      avatars.forEach(avatar => {
+        avatar.textContent = initial;
+      });
+    }
+
+    // Save personal information
+    document.getElementById('personalForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone,
+          birthDate: data.birthDate,
+          gender: data.gender
+        });
+        
+        showToast('Personal information updated successfully!', 'success');
+        await loadUserProfile(currentUser.uid);
+      } catch (error) {
+        console.error('Error updating personal info:', error);
+        showToast('Failed to update personal information', 'error');
+      }
+    });
+
+    // Save shipping address
+    document.getElementById('shippingForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      
+      try {
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          addressLine1: data.addressLine1,
+          addressLine2: data.addressLine2,
+          city: data.city,
+          province: data.province,
+          postalCode: data.postalCode,
+          country: data.country,
+          defaultShipping: data.defaultShipping === 'on'
+        });
+        
+        showToast('Shipping address updated successfully!', 'success');
+        await loadUserProfile(currentUser.uid);
+      } catch (error) {
+        console.error('Error updating shipping address:', error);
+        showToast('Failed to update shipping address', 'error');
+      }
+    });
+
+    // Change password
+    document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const currentPassword = formData.get('currentPassword');
+      const newPassword = formData.get('newPassword');
+      const confirmPassword = formData.get('confirmPassword');
+
+      if (newPassword !== confirmPassword) {
+        showToast('New passwords do not match', 'error');
+        return;
+      }
+
+      try {
+        const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+        await reauthenticateWithCredential(currentUser, credential);
+        await updatePassword(currentUser, newPassword);
+        
+        showToast('Password updated successfully!', 'success');
+        e.target.reset();
+      } catch (error) {
+        console.error('Error updating password:', error);
+        if (error.code === 'auth/wrong-password') {
+          showToast('Current password is incorrect', 'error');
+        } else {
+          showToast('Failed to update password', 'error');
+        }
+      }
+    });
+
+    // Load order history
+    async function loadOrderHistory(uid) {
+      try {
+        const ordersQuery = query(
+          collection(db, 'orders'),
+          where('userId', '==', uid),
+          orderBy('createdAt', 'desc')
+        );
+        
+        const querySnapshot = await getDocs(ordersQuery);
+        const ordersList = document.getElementById('ordersList');
+        
+        if (querySnapshot.empty) {
+          ordersList.innerHTML = `
+            <div class="no-orders">
+              <div class="no-orders-icon">📦</div>
+              <h3>No orders yet</h3>
+              <p>Start shopping to see your order history here</p>
+              <a href="home.html" class="shop-btn">Start Shopping</a>
+            </div>
+          `;
+          return;
+        }
+
+        let ordersHTML = '';
+        querySnapshot.forEach((doc) => {
+          const order = { id: doc.id, ...doc.data() };
+          ordersHTML += createOrderCard(order);
+        });
+        
+        ordersList.innerHTML = ordersHTML;
+      } catch (error) {
+        console.error('Error loading order history:', error);
+        showToast('Failed to load order history', 'error');
+      }
+    }
+
+    // Create order card
+    function createOrderCard(order) {
+      const statusClass = order.status?.toLowerCase().replace(' ', '-') || 'pending';
+      const total = order.items?.reduce((sum, item) => sum + (item.price * item.quantity), 0) || 0;
+      const date = new Date(order.createdAt?.toDate() || order.createdAt).toLocaleDateString();
+      
+      return `
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-info">
+              <h4>Order #${order.id.substring(0, 8)}</h4>
+              <span class="order-date">${date}</span>
+            </div>
+            <div class="order-status ${statusClass}">${order.status || 'Pending'}</div>
+          </div>
+          <div class="order-details">
+            <div class="order-items">
+              ${order.items?.map(item => `
+                <div class="order-item">
+                  <span class="item-name">${item.name}</span>
+                  <span class="item-qty">Qty: ${item.quantity}</span>
+                </div>
+              `).join('') || ''}
+            </div>
+            <div class="order-total">
+              Total: ₱${parseFloat(total).toFixed(2)}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Tab functionality
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabId = btn.dataset.tab;
+        
+        // Remove active class from all tabs and panels
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        
+        // Add active class to clicked tab and corresponding panel
+        btn.classList.add('active');
+        document.getElementById(`${tabId}-tab`).classList.add('active');
+      });
+    });
+
+    // Toast notification
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      
+      toastMessage.textContent = message;
+      toast.className = `toast ${type} show`;
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // Logout functionality
+    const logoutModal = document.getElementById('logoutModal');
+    
+    function showLogoutModal() {
+      logoutModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeLogoutModal() {
+      logoutModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('profileLogout').onclick = showLogoutModal;
+    document.getElementById('cancelLogoutBtn').onclick = closeLogoutModal;
+
+    document.getElementById('confirmLogoutBtn').onclick = function() {
+      closeLogoutModal();
+      window.location.href = "index.html";
+    };
+
+    logoutModal.onclick = (e) => {
+      if (e.target === logoutModal) closeLogoutModal();
+    };
+
+  </script>
+</body>
+</html>
