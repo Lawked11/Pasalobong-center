@@ -129,6 +129,17 @@
     </div>
   </div>
 
+  <!-- Success Modal -->
+  <div id="successModal" class="logout-modal">
+    <div class="logout-modal-content">
+      <h3>Success</h3>
+      <p>Order deleted successfully!</p>
+      <div class="logout-modal-actions">
+        <button id="successOkBtn" class="modal-btn logout-confirm">OK</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Logout Modal -->
   <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -311,8 +322,13 @@
         const orderRef = doc(db, 'orders', currentOrderId);
         await deleteDoc(orderRef);
 
-        alert('Order deleted successfully!');
         closeDeleteModal();
+        // Show success modal instead of alert
+        const successModal = document.getElementById('successModal');
+        if (successModal) {
+          successModal.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        }
       } catch (error) {
         console.error('Error deleting order:', error);
         alert('Error deleting order. Please try again.');
@@ -336,6 +352,18 @@
     document.getElementById('cancelDeleteBtn').onclick = closeDeleteModal;
     document.getElementById('deleteModal').onclick = (e) => {
       if (e.target === document.getElementById('deleteModal')) closeDeleteModal();
+    };
+
+    // Success modal events
+    const successModalEl = document.getElementById('successModal');
+    const successOkBtn = document.getElementById('successOkBtn');
+    function closeSuccessModal() {
+      successModalEl.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    successOkBtn.onclick = closeSuccessModal;
+    successModalEl.onclick = (e) => {
+      if (e.target === successModalEl) closeSuccessModal();
     };
 
     // Logout functionality

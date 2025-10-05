@@ -23,6 +23,17 @@
         PASALOBONG CENTER
       </div>
       <div class="navbar-right">
+        <div class="notif-wrapper" id="notifWrapper" aria-haspopup="true">
+          <button id="notifBtn" class="notif-btn" aria-label="Notifications" aria-expanded="false">🔔
+            <span id="notifBadge" class="notif-badge">0</span>
+          </button>
+          <div id="notifDropdown" class="notif-dropdown" role="menu" aria-hidden="true">
+            <div class="notif-header">Notifications</div>
+            <div id="notifList" class="notif-list">
+              <div id="notifEmpty" class="notif-empty">No notifications yet</div>
+            </div>
+          </div>
+        </div>
         <a href="cart.html" id="cartBtn" class="cart-btn" aria-label="Cart">
           <span class="cart-icon" aria-hidden="true">🛒</span>
           <span id="cartCount" class="cart-count" aria-live="polite">0</span>
@@ -59,13 +70,6 @@
   </header>
 
   <main>
-    <section class="welcome-section">
-      <div class="container hero">
-        <h1>Discover Authentic Pasalubong</h1>
-        <p>Curated local favorites, made with love. Shop fresh arrivals and timeless bestsellers.</p>
-        <a href="#products" class="cta-btn">Browse Products</a>
-      </div>
-    </section>
     
     <section class="products-section" id="products">
       <div class="container">
@@ -79,6 +83,7 @@
   <footer>
     <p>&copy; <span id="year"></span> Pasalobong Center. All rights reserved.</p>
   </footer>
+
 
   <!-- Filter & Sort Modal -->
   <div id="filterSortModal" class="filter-sort-modal">
@@ -173,6 +178,7 @@
       if (user) {
         loadCartFromFirestore(user.uid);
         updateProfileUI(user);
+        listenToOrderNotifications(user.uid);
       } else {
         updateCartUI([]);
         updateProfileUI(null);
@@ -432,6 +438,41 @@
     }
 
     // Cart functionality with Firestore
+    // Smooth fly-to-cart + toast helper
+    function animateAddToCart(sourceImgEl) {
+      try {
+        const cartBtn = document.getElementById('cartBtn');
+        if (!cartBtn || !sourceImgEl) return;
+
+        const imgRect = sourceImgEl.getBoundingClientRect();
+        const cartRect = cartBtn.getBoundingClientRect();
+
+        const flyImg = sourceImgEl.cloneNode(true);
+        flyImg.classList.add('cart-fly-img');
+        flyImg.style.width = imgRect.width + 'px';
+        flyImg.style.height = imgRect.height + 'px';
+        flyImg.style.left = imgRect.left + 'px';
+        flyImg.style.top = imgRect.top + 'px';
+        flyImg.style.opacity = '1';
+        flyImg.style.transform = 'translate(0, 0) scale(1)';
+        document.body.appendChild(flyImg);
+
+        const translateX = cartRect.left + cartRect.width / 2 - (imgRect.left + imgRect.width / 2);
+        const translateY = cartRect.top + cartRect.height / 2 - (imgRect.top + imgRect.height / 2);
+
+        requestAnimationFrame(() => {
+          flyImg.style.transform = `translate(${translateX}px, ${translateY}px) scale(0.2)`;
+          flyImg.style.opacity = '0.2';
+        });
+
+        setTimeout(() => {
+          flyImg.remove();
+          cartBtn.classList.add('bump');
+          setTimeout(() => cartBtn.classList.remove('bump'), 400);
+        }, 650);
+      } catch (_) { /* no-op visual only */ }
+    }
+
     async function addToCart(product) {
       if (!currentUser) {
         alert('Please login to add items to cart');
@@ -458,6 +499,17 @@
             addedAt: new Date()
           });
         }
+        // Trigger animations
+        try {
+          const productCards = document.querySelectorAll('.product-card');
+          for (const card of productCards) {
+            if (card.querySelector('h4')?.textContent === product.name) {
+              const img = card.querySelector('img');
+              if (img) animateAddToCart(img);
+              break;
+            }
+          }
+        } catch (_) {}
       } catch (error) {
         console.error('Error adding to cart:', error);
         alert('Failed to add item to cart');
@@ -491,6 +543,103 @@
     function updateCartUI(cartItems) {
       const count = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
       document.getElementById('cartCount').textContent = count;
+    }
+
+    // Notifications: UI helpers
+    const notifBtn = document.getElementById('notifBtn');
+    const notifBadge = document.getElementById('notifBadge');
+    const notifDropdown = document.getElementById('notifDropdown');
+    const notifList = document.getElementById('notifList');
+    const notifEmpty = document.getElementById('notifEmpty');
+    let unseenCount = 0;
+
+    function toggleNotifDropdown(open) {
+      if (!notifDropdown) return;
+      const willOpen = typeof open === 'boolean' ? open : !notifDropdown.classList.contains('open');
+      notifDropdown.classList.toggle('open', willOpen);
+      notifDropdown.setAttribute('aria-hidden', String(!willOpen));
+      if (notifBtn) notifBtn.setAttribute('aria-expanded', String(willOpen));
+      if (willOpen) {
+        unseenCount = 0;
+        if (notifBadge) notifBadge.style.display = 'none';
+      }
+    }
+
+    if (notifBtn) {
+      notifBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleNotifDropdown();
+      });
+    }
+    document.addEventListener('click', (e) => {
+      const within = document.getElementById('notifWrapper')?.contains(e.target);
+      if (!within) toggleNotifDropdown(false);
+    });
+
+    function pushNotification({ title, subtitle, icon = '📦' }) {
+      if (!notifList) return;
+      const item = document.createElement('div');
+      item.className = 'notif-item';
+      item.innerHTML = `
+        <div class="notif-icon">${icon}</div>
+        <div class="notif-content">
+          <div class="notif-title">${title}</div>
+          <div class="notif-sub">${subtitle}</div>
+        </div>
+      `;
+      if (notifEmpty) notifEmpty.style.display = 'none';
+      notifList.insertBefore(item, notifList.firstChild);
+      // Limit list length
+      while (notifList.children.length > 15) {
+        const last = notifList.lastElementChild;
+        if (last && last.id !== 'notifEmpty') notifList.removeChild(last); else break;
+      }
+      unseenCount += 1;
+      if (notifBadge) {
+        notifBadge.textContent = String(unseenCount);
+        notifBadge.style.display = 'inline-block';
+      }
+    }
+
+    // Realtime order notifications for this user
+    let ordersListenerUnsub = null;
+    function listenToOrderNotifications(uid) {
+      try {
+        if (ordersListenerUnsub) { ordersListenerUnsub(); ordersListenerUnsub = null; }
+        const ordersRef = collection(db, 'orders');
+        const qOrders = query(ordersRef, where('customerId', '==', uid), orderBy('createdAt', 'desc'));
+        const pageLoadSeconds = Math.floor(Date.now() / 1000);
+        ordersListenerUnsub = onSnapshot(qOrders, (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            const data = { id: change.doc.id, ...change.doc.data() };
+            const createdSec = data.createdAt?.seconds || 0;
+            if (change.type === 'added' && createdSec >= pageLoadSeconds) {
+              pushNotification({
+                title: 'Order placed',
+                subtitle: `#${data.id.substring(0,8)} • Total: ₱${(data.total||0).toFixed(2)}`,
+                icon: '🛒'
+              });
+            }
+            if (change.type === 'modified') {
+              const status = data.status || 'updated';
+              pushNotification({
+                title: `Order ${status}`,
+                subtitle: `#${data.id.substring(0,8)} • Updated ${new Date().toLocaleTimeString()}`,
+                icon: status === 'cancelled' ? '❌' : '🔔'
+              });
+            }
+            if (change.type === 'removed') {
+              pushNotification({
+                title: 'Order removed',
+                subtitle: `#${data.id.substring(0,8)} was removed`,
+                icon: '🗑️'
+              });
+            }
+          });
+        });
+      } catch (e) {
+        console.error('Notification listener error:', e);
+      }
     }
 
     // Filter & Sort Modal Functions

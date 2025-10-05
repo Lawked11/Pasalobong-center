@@ -12,6 +12,7 @@
 <body>
   <header>
     <nav class="navbar">
+      <div class="navbar-left"></div>
       <div class="navbar-center">
         <a href="home.html" class="navbar-brand">PASALOBONG CENTER</a>
       </div>
@@ -121,6 +122,17 @@
       <div class="modal-actions">
         <button class="modal-btn confirm" id="goToProfileBtn">Go to Profile</button>
         <button class="modal-btn cancel" id="closeProfileModalBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="confirm-modal" aria-hidden="true">
+    <div class="modal-content">
+      <h3>Success</h3>
+      <p>Order placed successfully! Your order has been confirmed.</p>
+      <div class="modal-actions">
+        <button class="modal-btn confirm" id="successOkBtn">OK</button>
       </div>
     </div>
   </div>
@@ -506,7 +518,9 @@
           });
 
           selectedItems.clear();
-          alert('Order placed successfully! Your order has been confirmed.');
+          // Show success modal instead of alert
+          const successModal = document.getElementById('successModal');
+          if (successModal) successModal.classList.add('open');
           
         } catch (error) {
           console.error('Error during checkout:', error);
@@ -579,8 +593,17 @@
     };
 
     const profileIncompleteModal = document.getElementById('profileIncompleteModal');
+    const successModal = document.getElementById('successModal');
     profileIncompleteModal.onclick = (e) => {
       if (e.target === profileIncompleteModal) closeProfileIncompleteModal();
+    };
+
+    // Success modal handlers
+    document.getElementById('successOkBtn').onclick = () => {
+      successModal.classList.remove('open');
+    };
+    successModal.onclick = (e) => {
+      if (e.target === successModal) successModal.classList.remove('open');
     };
 
   </script>

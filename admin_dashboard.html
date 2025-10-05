@@ -19,6 +19,20 @@
         <span class="admin-title">ADMIN DASHBOARD</span>
       </div>
       <div class="navbar-right">
+        <div class="notif-wrapper" id="notifWrapper" aria-haspopup="true">
+          <button id="notifBtn" class="notif-btn" aria-label="Notifications" aria-expanded="false">🔔
+            <span id="notifBadge" class="notif-badge">0</span>
+          </button>
+          <div id="notifDropdown" class="notif-dropdown" role="menu" aria-hidden="true">
+            <div class="notif-header">Notifications</div>
+            <div id="notifList" class="notif-list">
+              <div id="notifEmpty" class="notif-empty">No new notifications</div>
+            </div>
+            <div class="notif-footer">
+              <a href="orders.html" class="notif-view-all">View orders</a>
+            </div>
+          </div>
+        </div>
         <button id="logoutBtn" class="logout-btn">Logout</button>
       </div>
     </nav>
@@ -166,6 +180,98 @@
     drawerBackdrop.onclick = closeDrawer;
     sideDrawer.addEventListener('click', (e) => {
       if (e.target.tagName === 'A') closeDrawer();
+    });
+  </script>
+  <script type="module">
+    import { auth, db } from './firebase.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { collection, query, orderBy, onSnapshot, limit } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const notifBtn = document.getElementById('notifBtn');
+    const notifBadge = document.getElementById('notifBadge');
+    const notifDropdown = document.getElementById('notifDropdown');
+    const notifList = document.getElementById('notifList');
+    const notifEmpty = document.getElementById('notifEmpty');
+
+    let unseenCount = 0;
+    const pageLoadSeconds = Math.floor(Date.now() / 1000);
+    const maxItems = 10;
+
+    function toggleDropdown(open) {
+      const willOpen = typeof open === 'boolean' ? open : !notifDropdown.classList.contains('open');
+      notifDropdown.classList.toggle('open', willOpen);
+      notifDropdown.setAttribute('aria-hidden', String(!willOpen));
+      notifBtn.setAttribute('aria-expanded', String(willOpen));
+      if (willOpen) {
+        unseenCount = 0;
+        notifBadge.style.display = 'none';
+      }
+    }
+
+    function addNotifItem(order) {
+      const item = document.createElement('div');
+      item.className = 'notif-item';
+      const orderIdShort = (order.id || '').substring(0, 8);
+      const createdAt = order.createdAt?.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleString() : 'Just now';
+      const total = typeof order.total === 'number' ? `₱${order.total.toFixed(2)}` : 'N/A';
+
+      item.innerHTML = `
+        <div class="notif-icon">🛒</div>
+        <div class="notif-content">
+          <div class="notif-title">New order received • ${total}</div>
+          <div class="notif-sub">#${orderIdShort} • ${createdAt}</div>
+        </div>
+      `;
+
+      if (notifEmpty) notifEmpty.style.display = 'none';
+      notifList.insertBefore(item, notifList.firstChild);
+
+      // Trim list
+      while (notifList.children.length > maxItems + 1) { // +1 accounts for empty div possibly
+        const last = notifList.lastElementChild;
+        if (last && last.id !== 'notifEmpty') notifList.removeChild(last);
+        else break;
+      }
+
+      unseenCount += 1;
+      notifBadge.textContent = String(unseenCount);
+      notifBadge.style.display = unseenCount > 0 ? 'inline-block' : 'none';
+    }
+
+    // Toggle dropdown
+    notifBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      const within = document.getElementById('notifWrapper')?.contains(e.target);
+      if (!within) toggleDropdown(false);
+    });
+
+    // Auth gate (admin only) and realtime listener for new orders
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return; // silently ignore on dashboard UI
+      try {
+        // Lightweight: listen without role fetch; orders.html already enforces admin for management
+        const ordersRef = collection(db, 'orders');
+        const q = query(ordersRef, orderBy('createdAt', 'desc'), limit(50));
+        onSnapshot(q, (snapshot) => {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === 'added') {
+              const data = { id: change.doc.id, ...change.doc.data() };
+              const createdSec = data.createdAt?.seconds || 0;
+              if (data.status === 'pending' && createdSec >= pageLoadSeconds) {
+                addNotifItem(data);
+              }
+            }
+          });
+        });
+      } catch (e) {
+        // Fail silently; dashboard still usable
+        console.error('Notifications error:', e);
+      }
     });
   </script>
 </body>

@@ -30,6 +30,12 @@ header {
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .burger {
   display: inline-flex;
   flex-direction: column;
@@ -73,6 +79,31 @@ header {
   border: 1px solid #F9A825;
   transform: translateY(-2px) scale(1.05);
 }
+
+/* Notifications */
+.notif-wrapper { position: relative; margin-right: 6px; }
+.notif-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: transparent; border: none; cursor: pointer; font-size: 20px; color: #fff; border-radius: 9999px; transition: background 0.15s ease, transform 0.15s ease; }
+.notif-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-1px); }
+.notif-btn:focus { outline: 2px solid #F9A825; outline-offset: 2px; }
+.notif-badge { position: absolute; top: -2px; right: -2px; background: #ef4444; color: #fff; border-radius: 9999px; padding: 2px 6px; font-size: 11px; font-weight: 700; display: none; box-shadow: 0 1px 6px rgba(0,0,0,0.25); }
+.notif-dropdown { position: absolute; right: 0; top: 42px; width: min(92vw, 340px); background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 12px 28px rgba(0,0,0,0.12); display: none; z-index: 2700; overflow: hidden; }
+.notif-dropdown.open { display: block; }
+.notif-header { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; font-weight: 700; font-size: 14px; color: #1f2937; background: #fff; }
+.notif-list { max-height: 320px; overflow-y: auto; background: #fff; }
+.notif-empty { padding: 14px; color: #6b7280; font-size: 13px; }
+.notif-item { padding: 12px; border-bottom: 1px solid #f3f4f6; display: flex; gap: 10px; align-items: flex-start; background: #fff; }
+.notif-item:last-child { border-bottom: none; }
+.notif-icon { font-size: 18px; }
+.notif-content { flex: 1; }
+.notif-title { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+.notif-sub { color: #6b7280; font-size: 12px; }
+.notif-footer { padding: 8px 12px; text-align: right; border-top: 1px solid #f3f4f6; }
+.notif-view-all { font-size: 12px; color: #2563eb; text-decoration: none; font-weight: 600; }
+
+/* Scrollbar refinement for notif list (non-intrusive) */
+.notif-list::-webkit-scrollbar { width: 8px; }
+.notif-list::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 9999px; }
+.notif-list:hover::-webkit-scrollbar-thumb { background: #d1d5db; }
 
 main {
   flex: 1 0 auto;
@@ -735,6 +766,9 @@ main {
 }
 
 @media (max-width: 600px) {
+  .navbar-right { gap: 6px; }
+  .notif-btn { width: 34px; height: 34px; font-size: 18px; }
+  .notif-dropdown { top: 40px; right: -6px; width: min(94vw, 360px); }
   .admin-title {
     font-size: 1.2rem;
     letter-spacing: 1px;
