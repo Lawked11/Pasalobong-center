@@ -113,29 +113,28 @@
     </div>
   </div>
 
+  <!-- Profile Incomplete Modal -->
+  <div id="profileIncompleteModal" class="confirm-modal">
+    <div class="modal-content">
+      <h3>Complete Your Profile</h3>
+      <p id="profileIncompleteMessage">Please complete your profile information before checking out.</p>
+      <div class="modal-actions">
+        <button class="modal-btn confirm" id="goToProfileBtn">Go to Profile</button>
+        <button class="modal-btn cancel" id="closeProfileModalBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, collection, doc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyD373HsUJ7jJsDZEKZQzaHGPAJglizaZY4",
-      authDomain: "pasalobong-486c3.firebaseapp.com",
-      projectId: "pasalobong-486c3",
-      storageBucket: "pasalobong-486c3.firebasestorage.app",
-      messagingSenderId: "157431097657",
-      appId: "1:157431097657:web:dc8afc6e6d18ada4a120e8",
-      measurementId: "G-Y13929E4XY"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    import { auth, db } from './firebase.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { collection, doc, getDoc, updateDoc, deleteDoc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     let currentUser = null;
     let cartUnsubscribe = null;
     let cartItems = [];
     let selectedItems = new Set();
+    let userProfile = null;
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -167,28 +166,51 @@
 
     async function loadShippingInfo(uid) {
       try {
-        const shippingRef = doc(db, 'users', uid, 'shipping', 'info');
-        const shippingDoc = await getDoc(shippingRef);
+        const profileRef = doc(db, 'customers', uid, 'profile', 'info');
+        const profileDoc = await getDoc(profileRef);
         
-        if (shippingDoc.exists()) {
-          const data = shippingDoc.data();
-          document.getElementById('displayName').textContent = data.name || '';
-          document.getElementById('displayPhone').textContent = data.phone || '';
-          document.getElementById('displayAddress').textContent = data.address || '';
+        if (profileDoc.exists()) {
+          userProfile = profileDoc.data();
+          const { firstName, lastName, phoneNumber, shippingAddress } = userProfile;
           
-          document.getElementById('shippingDisplay').style.display = 'block';
-          document.getElementById('noShippingInfo').style.display = 'none';
-          document.getElementById('editShippingBtn').style.display = 'block';
+          if (firstName && lastName && phoneNumber && 
+              shippingAddress && shippingAddress.street && shippingAddress.city) {
+            
+            const fullName = `${firstName} ${lastName}`;
+            const fullAddress = [
+              shippingAddress.houseNumber,
+              shippingAddress.street,
+              shippingAddress.city,
+              shippingAddress.state,
+              shippingAddress.postalCode,
+              shippingAddress.country
+            ].filter(part => part && part.trim()).join(', ');
+            
+            document.getElementById('displayName').textContent = fullName;
+            document.getElementById('displayPhone').textContent = phoneNumber;
+            document.getElementById('displayAddress').textContent = fullAddress;
+            
+            document.getElementById('shippingDisplay').style.display = 'block';
+            document.getElementById('noShippingInfo').style.display = 'none';
+            document.getElementById('editShippingBtn').style.display = 'block';
+          } else {
+            document.getElementById('shippingDisplay').style.display = 'none';
+            document.getElementById('noShippingInfo').style.display = 'block';
+            document.getElementById('editShippingBtn').style.display = 'none';
+            userProfile = null;
+          }
         } else {
           document.getElementById('shippingDisplay').style.display = 'none';
           document.getElementById('noShippingInfo').style.display = 'block';
           document.getElementById('editShippingBtn').style.display = 'none';
+          userProfile = null;
         }
       } catch (error) {
         console.error('Error loading shipping info:', error);
         document.getElementById('shippingDisplay').style.display = 'none';
         document.getElementById('noShippingInfo').style.display = 'block';
         document.getElementById('editShippingBtn').style.display = 'none';
+        userProfile = null;
       }
     }
 
@@ -348,6 +370,46 @@
       });
     }
 
+    function checkProfileComplete() {
+      if (!userProfile) {
+        return {
+          complete: false,
+          missingFields: ['All profile information']
+        };
+      }
+
+      const missingFields = [];
+      
+      if (!userProfile.firstName || !userProfile.firstName.trim()) {
+        missingFields.push('First Name');
+      }
+      if (!userProfile.lastName || !userProfile.lastName.trim()) {
+        missingFields.push('Last Name');
+      }
+      if (!userProfile.phoneNumber || !userProfile.phoneNumber.trim()) {
+        missingFields.push('Phone Number');
+      }
+      
+      const address = userProfile.shippingAddress;
+      if (!address || !address.street || !address.street.trim()) {
+        missingFields.push('Street Address');
+      }
+      if (!address || !address.city || !address.city.trim()) {
+        missingFields.push('City');
+      }
+      if (!address || !address.state || !address.state.trim()) {
+        missingFields.push('Province/State');
+      }
+      if (!address || !address.postalCode || !address.postalCode.trim()) {
+        missingFields.push('Postal Code');
+      }
+
+      return {
+        complete: missingFields.length === 0,
+        missingFields: missingFields
+      };
+    }
+
     async function checkout() {
       if (!currentUser) {
         alert('Please log in to proceed with checkout.');
@@ -359,10 +421,10 @@
         return;
       }
 
-      // Check if shipping info exists
-      const shippingDisplay = document.getElementById('shippingDisplay');
-      if (shippingDisplay.style.display === 'none') {
-        alert('Please save your shipping information before checking out.');
+      const profileStatus = checkProfileComplete();
+      
+      if (!profileStatus.complete) {
+        showProfileIncompleteModal(profileStatus.missingFields);
         return;
       }
 
@@ -370,36 +432,127 @@
       
       showConfirm(`Proceed to checkout with ${selectedProducts.length} item(s)?`, async () => {
         try {
-          // Get shipping info
-          const name = document.getElementById('displayName').textContent;
-          const phone = document.getElementById('displayPhone').textContent;
-          const address = document.getElementById('displayAddress').textContent;
+          const checkoutBtn = document.getElementById('checkoutBtn');
+          checkoutBtn.disabled = true;
+          checkoutBtn.textContent = 'Processing...';
+
+          let subtotal = 0;
+          selectedProducts.forEach(item => {
+            subtotal += item.price * item.quantity;
+          });
 
           const orderData = {
-            items: selectedProducts,
-            shippingInfo: { name, phone, address },
+            customerId: currentUser.uid,
+            customerEmail: currentUser.email,
+            items: selectedProducts.map(item => ({
+              productId: item.productId || item.id,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              imageUrl: item.imageUrl || ''
+            })),
+            shippingInfo: {
+              name: document.getElementById('displayName').textContent,
+              phone: document.getElementById('displayPhone').textContent,
+              address: document.getElementById('displayAddress').textContent
+            },
             paymentMethod: 'Cash on Delivery',
-            total: document.getElementById('total').textContent,
-            timestamp: new Date().toISOString()
+            subtotal: subtotal,
+            shippingFee: 0,
+            total: subtotal,
+            status: 'pending',
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
           };
 
-          console.log('Order data:', orderData);
+          await runTransaction(db, async (transaction) => {
+            const stockChecks = [];
+            
+            for (const item of selectedProducts) {
+              const productId = item.productId || item.id;
+              const productRef = doc(db, 'products', productId);
+              const productDoc = await transaction.get(productRef);
+              
+              if (!productDoc.exists()) {
+                throw new Error(`Product "${item.name}" no longer exists.`);
+              }
+              
+              const currentStock = productDoc.data().stock;
+              if (currentStock < item.quantity) {
+                throw new Error(`Insufficient stock for "${item.name}". Available: ${currentStock}, Requested: ${item.quantity}`);
+              }
+              
+              stockChecks.push({
+                ref: productRef,
+                currentStock: currentStock,
+                quantityToDeduct: item.quantity
+              });
+            }
+
+            const orderRef = doc(collection(db, 'orders'));
+            transaction.set(orderRef, orderData);
+
+            stockChecks.forEach(check => {
+              transaction.update(check.ref, {
+                stock: check.currentStock - check.quantityToDeduct,
+                updatedAt: serverTimestamp()
+              });
+            });
+
+            selectedProducts.forEach(item => {
+              const cartItemRef = doc(db, 'carts', currentUser.uid, 'items', item.id);
+              transaction.delete(cartItemRef);
+            });
+          });
+
+          selectedItems.clear();
+          alert('Order placed successfully! Your order has been confirmed.');
           
-          // TODO: Save order to Firestore and remove selected items from cart
-          alert('Checkout functionality coming soon! Your order has been logged to the console.');
         } catch (error) {
           console.error('Error during checkout:', error);
-          alert('Error processing checkout. Please try again.');
+          
+          if (error.message.includes('Insufficient stock') || error.message.includes('no longer exists')) {
+            alert(error.message);
+          } else {
+            alert('Error processing checkout. Please try again.');
+          }
+        } finally {
+          const checkoutBtn = document.getElementById('checkoutBtn');
+          checkoutBtn.disabled = false;
+          checkoutBtn.textContent = 'Proceed to Checkout';
         }
       });
     }
 
-    // Event listeners
-    document.getElementById('saveShippingBtn').onclick = saveShippingInfo;
-    document.getElementById('editShippingBtn').onclick = editShippingInfo;
+    function showProfileIncompleteModal(missingFields) {
+      const modal = document.getElementById('profileIncompleteModal');
+      const message = document.getElementById('profileIncompleteMessage');
+      
+      if (missingFields.length === 1 && missingFields[0] === 'All profile information') {
+        message.textContent = 'Please complete your profile information before checking out. You need to fill in your personal details and shipping address.';
+      } else {
+        message.textContent = `Please complete the following information in your profile before checking out: ${missingFields.join(', ')}.`;
+      }
+      
+      modal.classList.add('open');
+    }
+
+    function closeProfileIncompleteModal() {
+      document.getElementById('profileIncompleteModal').classList.remove('open');
+    }
+
+    document.getElementById('editShippingBtn').onclick = () => {
+      window.location.href = 'profile.html';
+    };
+    
     document.getElementById('checkoutBtn').onclick = checkout;
 
-    // Confirm modal
+    document.getElementById('goToProfileBtn').onclick = () => {
+      window.location.href = 'profile.html';
+    };
+
+    document.getElementById('closeProfileModalBtn').onclick = closeProfileIncompleteModal;
+
     const confirmModal = document.getElementById('confirmModal');
     let confirmCallback = null;
 
@@ -423,6 +576,11 @@
     document.getElementById('confirmNo').onclick = closeConfirm;
     confirmModal.onclick = (e) => {
       if (e.target === confirmModal) closeConfirm();
+    };
+
+    const profileIncompleteModal = document.getElementById('profileIncompleteModal');
+    profileIncompleteModal.onclick = (e) => {
+      if (e.target === profileIncompleteModal) closeProfileIncompleteModal();
     };
 
   </script>

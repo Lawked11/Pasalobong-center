@@ -104,7 +104,30 @@ document.addEventListener('submit', async function(e) {
           window.location.href = redirectUrl;
         }, 1100);
       } catch (error) {
-        showNotification(`Login failed: ${error.message}`, 'error');
+        console.error('Login error:', error);
+        let errorMessage = 'Login failed: ';
+        
+        switch(error.code) {
+          case 'auth/invalid-email':
+            errorMessage += 'Invalid email address format.';
+            break;
+          case 'auth/user-disabled':
+            errorMessage += 'This account has been disabled.';
+            break;
+          case 'auth/user-not-found':
+            errorMessage += 'No account found with this email.';
+            break;
+          case 'auth/wrong-password':
+            errorMessage += 'Incorrect password.';
+            break;
+          case 'auth/invalid-credential':
+            errorMessage += 'Invalid email or password.';
+            break;
+          default:
+            errorMessage += error.message;
+        }
+        
+        showNotification(errorMessage, 'error');
       }
     }
 
@@ -126,6 +149,13 @@ document.addEventListener('submit', async function(e) {
         showNotification('Passwords do not match!', 'error');
         return;
       }
+      
+      // Validate password length
+      if (password.length < 6) {
+        showNotification('Password must be at least 6 characters long.', 'error');
+        return;
+      }
+      
       try {
         // Create user account
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -143,6 +173,27 @@ document.addEventListener('submit', async function(e) {
           updatedAt: serverTimestamp()
         });
         
+        // Create initial profile document in subcollection
+        const profileDocRef = doc(db, 'customers', user.uid, 'profile', 'info');
+        await setDoc(profileDocRef, {
+          firstName: '',
+          lastName: '',
+          email: email,
+          phoneNumber: '',
+          birthDate: '',
+          gender: '',
+          shippingAddress: {
+            houseNumber: '',
+            street: '',
+            city: '',
+            state: '',
+            postalCode: '',
+            country: 'Philippines'
+          },
+          defaultShipping: false,
+          createdAt: serverTimestamp()
+        });
+        
         showNotification('Account created successfully! Please login.', 'success');
         if (document.getElementById('modalOverlay')) {
           document.getElementById('modalOverlay').classList.remove('open');
@@ -152,7 +203,27 @@ document.addEventListener('submit', async function(e) {
           document.getElementById('loginForm').style.display = 'flex';
         }
       } catch (error) {
-        showNotification(`Signup failed: ${error.message}`, 'error');
+        console.error('Signup error:', error);
+        let errorMessage = 'Signup failed: ';
+        
+        switch(error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage += 'This email is already registered. Please login instead.';
+            break;
+          case 'auth/invalid-email':
+            errorMessage += 'Invalid email address format.';
+            break;
+          case 'auth/operation-not-allowed':
+            errorMessage += 'Email/password accounts are not enabled. Please contact support.';
+            break;
+          case 'auth/weak-password':
+            errorMessage += 'Password is too weak. Please use a stronger password.';
+            break;
+          default:
+            errorMessage += error.message;
+        }
+        
+        showNotification(errorMessage, 'error');
       }
     }
   }
