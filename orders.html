@@ -63,7 +63,7 @@
   <aside id="sideDrawer" class="side-drawer" aria-hidden="true">
     <div class="drawer-header">Menu</div>
     <ul class="drawer-list">
-      <li><a href="admin_dashboard.html">Add Products</a></li>
+      <li><a href="admin_dashboard.html">Admin Dashboard</a></li>
       <li><a href="inventory.html">Product Inventory & Monitoring</a></li>
       <li><a href="users.html">User Accounts Management</a></li>
       <li><a href="orders.html">Order Monitoring</a></li>
@@ -153,9 +153,9 @@
   </div>
 
   <script type="module">
-    import { auth, db } from './firebase.js';
+     import { auth, db } from './firebase.js';
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     let currentUser = null;
     let ordersUnsubscribe = null;
@@ -271,7 +271,7 @@
       });
     }
 
-    async function updateOrderStatus(orderId, newStatus, selectElement) {
+ async function updateOrderStatus(orderId, newStatus, selectElement) {
       const previousStatus = selectElement.className.match(/status-(\w+)/)[1];
       
       // Update the class immediately for visual feedback
@@ -279,10 +279,21 @@
 
       try {
         const orderRef = doc(db, 'orders', orderId);
+        const orderDoc = await getDoc(orderRef);
+        
+        if (!orderDoc.exists()) {
+          throw new Error('Order not found');
+        }
+
+        const orderData = orderDoc.data();
+        
         await updateDoc(orderRef, {
           status: newStatus,
           updatedAt: new Date()
         });
+
+        // Create notification for the customer
+        await createCustomerNotification(orderId, orderData, newStatus);
 
         // Show success message
         const originalText = selectElement.options[selectElement.selectedIndex].text;
@@ -301,6 +312,62 @@
       }
     }
 
+    async function createCustomerNotification(orderId, orderData, newStatus) {
+      try {
+        const customerId = orderData.customerId;
+        if (!customerId) {
+          console.warn('No customer ID found for order:', orderId);
+          return;
+        }
+
+        const statusMessages = {
+          pending: 'Your order has been received and is pending confirmation.',
+          processing: 'Your order is now being processed.',
+          shipped: 'Great news! Your order has been shipped and is on its way.',
+          delivered: 'Your order has been delivered. Thank you for shopping with us!',
+          cancelled: 'Your order has been cancelled.'
+        };
+
+        const statusIcons = {
+          pending: '⏳',
+          processing: '📦',
+          shipped: '🚚',
+          delivered: '✅',
+          cancelled: '❌'
+        };
+
+        const orderIdShort = orderId.substring(0, 8);
+        const title = `Order ${statusIcons[newStatus] || '📋'} ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`;
+        const message = statusMessages[newStatus] || 'Your order status has been updated.';
+
+        // Extract product information
+        const products = orderData.items || [];
+        const total = orderData.total || 0;
+
+        const notificationData = {
+          recipientId: customerId,
+          type: 'order_status',
+          title: title,
+          message: `${message} (Order #${orderIdShort})`,
+          orderId: orderId,
+          orderStatus: newStatus,
+          products: products.map(item => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price
+          })),
+          total: total,
+          createdAt: new Date(),
+          isRead: false
+        };
+
+        await addDoc(collection(db, 'notifications'), notificationData);
+        console.log('Customer notification created for order:', orderId);
+      } catch (error) {
+        console.error('Error creating customer notification:', error);
+      }
+    }
+    
     function openDeleteModal(orderId) {
       currentOrderId = orderId;
       document.getElementById('deleteModalMessage').textContent = 

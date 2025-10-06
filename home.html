@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,16 +10,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="home.css">
 </head>
+
 <body>
   <header>
     <nav class="navbar">
-      <div class="navbar-left">
-        <button class="burger-menu" id="burgerMenuBtn" aria-label="Open menu">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </button>
-      </div>
+      <div class="navbar-left"></div>
       <div class="navbar-center">
         PASALOBONG CENTER
       </div>
@@ -39,7 +35,8 @@
           <span id="cartCount" class="cart-count" aria-live="polite">0</span>
         </a>
         <div class="profile" id="profile">
-          <button id="profileIconBtn" class="profile-btn" aria-haspopup="true" aria-expanded="false" aria-label="Profile">
+          <button id="profileIconBtn" class="profile-btn" aria-haspopup="true" aria-expanded="false"
+            aria-label="Profile">
             <span class="avatar" aria-hidden="true">G</span>
             <span class="profile-caret" aria-hidden="true">▾</span>
           </button>
@@ -58,22 +55,45 @@
           </div>
         </div>
       </div>
-      <aside id="mobileNav" class="mobile-nav" aria-hidden="true">
-        <div class="drawer-header">Menu</div>
-        <ul class="drawer-list">
-          <li><a href="cart.html">Cart</a></li>
-          <li><button id="filterSortBtnMobile" class="filter-sort-btn">Filter & Sort</button></li>
-        </ul>
-      </aside>
-      <div id="mobileNavBackdrop" class="mobile-nav-backdrop" hidden></div>
     </nav>
   </header>
 
   <main>
-    
     <section class="products-section" id="products">
       <div class="container">
-        <h2>Our Products</h2>
+        <div class="products-header">
+          <h2>Our Products</h2>
+          <div class="filter-sort-wrapper">
+            <button id="filterSortBtn" class="filter-sort-btn-header" aria-haspopup="true" aria-expanded="false">
+              <span>FILTER & SORT</span>
+              <span class="filter-icon">☰</span>
+            </button>
+            <div id="filterSortDropdown" class="filter-sort-dropdown" role="menu" aria-hidden="true">
+              <div class="filter-section">
+                <h4>Categories</h4>
+                <div id="categoryFilters" class="category-filters"></div>
+              </div>
+
+              <div class="filter-section">
+                <h4>Sort By</h4>
+                <select id="sortSelect">
+                  <option value="default">Default</option>
+                  <option value="name-asc">Name (A-Z)</option>
+                  <option value="name-desc">Name (Z-A)</option>
+                  <option value="price-asc">Price (Low to High)</option>
+                  <option value="price-desc">Price (High to Low)</option>
+                  <option value="stock-asc">Stock (Low to High)</option>
+                  <option value="stock-desc">Stock (High to Low)</option>
+                </select>
+              </div>
+
+              <div class="filter-actions">
+                <button class="filter-btn apply" id="applyFilters">Apply</button>
+                <button class="filter-btn clear" id="clearFilters">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div id="loadingSpinner" class="loading-spinner">Loading products...</div>
         <div id="productsGrid" class="products-grid"></div>
       </div>
@@ -83,40 +103,6 @@
   <footer>
     <p>&copy; <span id="year"></span> Pasalobong Center. All rights reserved.</p>
   </footer>
-
-
-  <!-- Filter & Sort Modal -->
-  <div id="filterSortModal" class="filter-sort-modal">
-    <div class="modal-content">
-      <button class="close-modal" id="closeFilterSortBtn">&times;</button>
-      <h3>Filter & Sort Products</h3>
-      
-      <div class="filter-section">
-        <h4>Categories</h4>
-        <div id="categoryFilters" class="category-filters">
-          <!-- Categories will be dynamically populated -->
-        </div>
-      </div>
-      
-      <div class="filter-section">
-        <h4>Sort By</h4>
-        <select id="sortSelect">
-          <option value="default">Default</option>
-          <option value="name-asc">Name (A-Z)</option>
-          <option value="name-desc">Name (Z-A)</option>
-          <option value="price-asc">Price (Low to High)</option>
-          <option value="price-desc">Price (High to Low)</option>
-          <option value="stock-asc">Stock (Low to High)</option>
-          <option value="stock-desc">Stock (High to Low)</option>
-        </select>
-      </div>
-      
-      <div class="filter-actions">
-        <button class="filter-btn apply" id="applyFilters">Apply</button>
-        <button class="filter-btn clear" id="clearFilters">Clear All</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Other Modals -->
   <div id="logoutModal" class="logout-modal">
@@ -145,7 +131,6 @@
     </div>
   </div>
 
-  <!-- Generic Confirm Modal -->
   <div id="confirmModal" class="confirm-modal" aria-hidden="true">
     <div class="modal-content">
       <h3 id="confirmTitle">Please Confirm</h3>
@@ -162,7 +147,6 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import { collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    // Global variables
     let allProducts = [];
     let filteredProducts = [];
     let activeCategories = new Set();
@@ -172,30 +156,29 @@
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Auth state listener
     onAuthStateChanged(auth, (user) => {
       currentUser = user;
       if (user) {
         loadCartFromFirestore(user.uid);
         updateProfileUI(user);
-        listenToOrderNotifications(user.uid);
+        loadExistingNotifications(user.uid);
+        listenToNotificationsFromFirestore(user.uid);
       } else {
         updateCartUI([]);
         updateProfileUI(null);
       }
     });
 
-    // Update profile UI with user data
     function updateProfileUI(user) {
       const profileName = document.getElementById('profileName');
       const profileEmail = document.getElementById('profileEmail');
       const avatars = document.querySelectorAll('.avatar');
-      
+
       if (user) {
         const displayName = user.displayName || user.email.split('@')[0];
         const email = user.email;
         const initial = displayName.charAt(0).toUpperCase();
-        
+
         profileName.textContent = displayName;
         profileEmail.textContent = email;
         avatars.forEach(avatar => {
@@ -210,20 +193,19 @@
       }
     }
 
-    // Load products from Firestore
     async function loadProducts() {
       const loadingSpinner = document.getElementById('loadingSpinner');
       const productsGrid = document.getElementById('productsGrid');
-      
+
       try {
         const productsQuery = query(
           collection(db, 'products'),
           where('isActive', '==', true),
           orderBy('createdAt', 'desc')
         );
-        
+
         const querySnapshot = await getDocs(productsQuery);
-        
+
         if (querySnapshot.empty) {
           loadingSpinner.innerHTML = '<div class="no-products">No products available at the moment.</div>';
           return;
@@ -240,7 +222,7 @@
         loadingSpinner.style.display = 'none';
         displayProducts();
         populateCategories();
-        
+
       } catch (error) {
         console.error('Error loading products:', error);
         loadingSpinner.innerHTML = '<div class="no-products">Error loading products. Please try again later.</div>';
@@ -250,12 +232,12 @@
     function displayProducts() {
       const productsGrid = document.getElementById('productsGrid');
       productsGrid.innerHTML = '';
-      
+
       if (filteredProducts.length === 0) {
         productsGrid.innerHTML = '<div class="no-products">No products found matching your criteria.</div>';
         return;
       }
-      
+
       filteredProducts.forEach(product => {
         const productCard = createProductCard(product);
         productsGrid.appendChild(productCard);
@@ -266,22 +248,22 @@
       const card = document.createElement('div');
       card.className = 'product-card';
       card.onclick = () => showProductDetails(product);
-      
+
       const img = document.createElement('img');
       img.src = product.imageUrl || 'images/placeholder.jpg';
       img.alt = product.name;
       img.onerror = () => { img.src = 'images/placeholder.jpg'; };
-      
+
       const title = document.createElement('h4');
       title.textContent = product.name;
-      
+
       const description = document.createElement('p');
       description.textContent = product.description;
-      
+
       const price = document.createElement('div');
       price.className = 'price';
       price.textContent = `₱${parseFloat(product.price).toFixed(2)}`;
-      
+
       const stockInfo = document.createElement('div');
       stockInfo.className = 'stock-info';
       if (product.stock > 0) {
@@ -290,7 +272,7 @@
         stockInfo.textContent = 'Out of Stock';
         stockInfo.classList.add('out-of-stock');
       }
-      
+
       const orderBtn = document.createElement('button');
       orderBtn.className = 'order-btn';
       orderBtn.textContent = product.stock > 0 ? 'Add to Cart' : 'Out of Stock';
@@ -301,27 +283,27 @@
           addToCart(product);
         }
       };
-      
+
       card.appendChild(img);
       card.appendChild(title);
       card.appendChild(description);
       card.appendChild(price);
       card.appendChild(stockInfo);
       card.appendChild(orderBtn);
-      
+
       return card;
     }
 
     function populateCategories() {
       const categoryFilters = document.getElementById('categoryFilters');
       categoryFilters.innerHTML = '';
-      
+
       const allFilter = document.createElement('div');
       allFilter.className = 'category-filter active';
       allFilter.textContent = 'All';
       allFilter.onclick = () => toggleCategory('All');
       categoryFilters.appendChild(allFilter);
-      
+
       Array.from(allCategories).sort().forEach(category => {
         const filter = document.createElement('div');
         filter.className = 'category-filter';
@@ -333,7 +315,7 @@
 
     function toggleCategory(category) {
       const filters = document.querySelectorAll('.category-filter');
-      
+
       if (category === 'All') {
         activeCategories.clear();
         filters.forEach(filter => {
@@ -348,7 +330,7 @@
             filter.classList.remove('active');
           }
         });
-        
+
         const filterElement = Array.from(filters).find(f => f.textContent === category);
         if (activeCategories.has(category)) {
           activeCategories.delete(category);
@@ -357,7 +339,7 @@
           activeCategories.add(category);
           filterElement.classList.add('active');
         }
-        
+
         if (activeCategories.size === 0) {
           filters[0].classList.add('active');
         }
@@ -366,13 +348,13 @@
 
     function applyFilters() {
       let filtered = [...allProducts];
-      
+
       if (activeCategories.size > 0) {
-        filtered = filtered.filter(product => 
+        filtered = filtered.filter(product =>
           activeCategories.has(product.category || 'Other')
         );
       }
-      
+
       const sortValue = document.getElementById('sortSelect').value;
       switch (sortValue) {
         case 'name-asc':
@@ -394,16 +376,16 @@
           filtered.sort((a, b) => b.stock - a.stock);
           break;
       }
-      
+
       filteredProducts = filtered;
       displayProducts();
-      closeFilterSortModal();
+      closeFilterSortDropdown();
     }
 
     function clearFilters() {
       activeCategories.clear();
       document.getElementById('sortSelect').value = 'default';
-      
+
       const filters = document.querySelectorAll('.category-filter');
       filters.forEach(filter => {
         filter.classList.remove('active');
@@ -411,7 +393,7 @@
           filter.classList.add('active');
         }
       });
-      
+
       filteredProducts = [...allProducts];
       displayProducts();
     }
@@ -419,7 +401,7 @@
     function showProductDetails(product) {
       const modal = document.getElementById('productModal');
       const modalContent = document.getElementById('productModalContent');
-      
+
       modalContent.innerHTML = `
         <img src="${product.imageUrl}" alt="${product.name}" onerror="this.src='images/placeholder.jpg'">
         <h2>${product.name}</h2>
@@ -432,13 +414,11 @@
           ${product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
         </button>
       `;
-      
+
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
 
-    // Cart functionality with Firestore
-    // Smooth fly-to-cart + toast helper
     function animateAddToCart(sourceImgEl) {
       try {
         const cartBtn = document.getElementById('cartBtn');
@@ -470,7 +450,7 @@
           cartBtn.classList.add('bump');
           setTimeout(() => cartBtn.classList.remove('bump'), 400);
         }, 650);
-      } catch (_) { /* no-op visual only */ }
+      } catch (_) { }
     }
 
     async function addToCart(product) {
@@ -499,7 +479,7 @@
             addedAt: new Date()
           });
         }
-        // Trigger animations
+
         try {
           const productCards = document.querySelectorAll('.product-card');
           for (const card of productCards) {
@@ -509,14 +489,14 @@
               break;
             }
           }
-        } catch (_) {}
+        } catch (_) { }
       } catch (error) {
         console.error('Error adding to cart:', error);
         alert('Failed to add item to cart');
       }
     }
 
-    window.addToCartById = async function(productId) {
+    window.addToCartById = async function (productId) {
       const product = allProducts.find(p => p.id === productId);
       if (product && product.stock > 0) {
         await addToCart(product);
@@ -545,13 +525,14 @@
       document.getElementById('cartCount').textContent = count;
     }
 
-    // Notifications: UI helpers
+    // ========== ENHANCED NOTIFICATION SYSTEM ==========
     const notifBtn = document.getElementById('notifBtn');
     const notifBadge = document.getElementById('notifBadge');
     const notifDropdown = document.getElementById('notifDropdown');
     const notifList = document.getElementById('notifList');
     const notifEmpty = document.getElementById('notifEmpty');
     let unseenCount = 0;
+    let notificationsListenerUnsub = null;
 
     function toggleNotifDropdown(open) {
       if (!notifDropdown) return;
@@ -571,101 +552,255 @@
         toggleNotifDropdown();
       });
     }
+
     document.addEventListener('click', (e) => {
       const within = document.getElementById('notifWrapper')?.contains(e.target);
       if (!within) toggleNotifDropdown(false);
     });
 
-    function pushNotification({ title, subtitle, icon = '📦' }) {
+    // Enhanced function to add notification cards with product details
+    function addNotificationCard(data) {
       if (!notifList) return;
+      
       const item = document.createElement('div');
-      item.className = 'notif-item';
+      item.className = 'notif-card';
+      
+      if (!data.isRead) {
+        item.classList.add('notif-unread');
+      }
+
+      const statusEmojis = {
+        pending: '⏳',
+        processing: '📦',
+        shipped: '🚚',
+        delivered: '✅',
+        cancelled: '❌'
+      };
+
+      const icon = statusEmojis[data.orderStatus] || '🔔';
+      
+      // Build products list HTML
+      let productsHtml = '';
+      if (data.products && data.products.length > 0) {
+        data.products.forEach((product, index) => {
+          if (index < 3) {
+            productsHtml += `
+              <div class="notif-product-line">
+                • ${product.name} (x${product.quantity}) - ₱${product.price.toFixed(2)}
+              </div>
+            `;
+          }
+        });
+        if (data.products.length > 3) {
+          productsHtml += `<div class="notif-product-more">+ ${data.products.length - 3} more item(s)</div>`;
+        }
+      }
+
+      // Mark as read button (only show if unread)
+      const markAsReadBtn = !data.isRead ? `
+        <button class="notif-mark-read-btn" data-notif-id="${data.id}">Mark as Read</button>
+      ` : '';
+
+      const orderIdShort = (data.orderId || '').substring(0, 8);
+
       item.innerHTML = `
-        <div class="notif-icon">${icon}</div>
-        <div class="notif-content">
-          <div class="notif-title">${title}</div>
-          <div class="notif-sub">${subtitle}</div>
+        <div class="notif-card-header">
+          <div class="notif-card-icon">${icon}</div>
+          <div class="notif-card-title-section">
+            <div class="notif-card-title">${data.title || 'Order Update'}</div>
+            <div class="notif-card-subtitle">${data.message || 'Your order status has been updated'}</div>
+          </div>
+        </div>
+        <div class="notif-card-body">
+          ${productsHtml}
+        </div>
+        <div class="notif-card-footer">
+          ${markAsReadBtn}
+          <button class="notif-view-order-btn" data-notif-id="${data.id}">View Order</button>
         </div>
       `;
+
+      // Hide empty state
       if (notifEmpty) notifEmpty.style.display = 'none';
+      
+      // Insert at the top
       notifList.insertBefore(item, notifList.firstChild);
-      // Limit list length
-      while (notifList.children.length > 15) {
+
+      // Keep only last 10 notifications
+      while (notifList.children.length > 11) {
         const last = notifList.lastElementChild;
-        if (last && last.id !== 'notifEmpty') notifList.removeChild(last); else break;
+        if (last && last.id !== 'notifEmpty') {
+          notifList.removeChild(last);
+        } else {
+          break;
+        }
       }
-      unseenCount += 1;
-      if (notifBadge) {
-        notifBadge.textContent = String(unseenCount);
-        notifBadge.style.display = 'inline-block';
+
+      // Update badge if unread
+      if (!data.isRead) {
+        unseenCount += 1;
+        if (notifBadge) {
+          notifBadge.textContent = String(unseenCount);
+          notifBadge.style.display = 'inline-block';
+        }
+      }
+
+      // Attach event listeners
+      attachNotificationEventListeners(item, data);
+    }
+
+    // Function to attach event listeners to notification buttons
+    function attachNotificationEventListeners(notifElement, data) {
+      const markReadBtn = notifElement.querySelector('.notif-mark-read-btn');
+      const viewOrderBtn = notifElement.querySelector('.notif-view-order-btn');
+
+      if (markReadBtn) {
+        markReadBtn.onclick = async (e) => {
+          e.stopPropagation();
+          await markAsRead(data.id);
+          notifElement.classList.remove('notif-unread');
+          markReadBtn.remove();
+        };
+      }
+
+      if (viewOrderBtn) {
+        viewOrderBtn.onclick = (e) => {
+          e.stopPropagation();
+          handleNotificationClick(data.id);
+        };
       }
     }
 
-    // Realtime order notifications for this user
-    let ordersListenerUnsub = null;
-    function listenToOrderNotifications(uid) {
+    // Mark notification as read
+    async function markAsRead(notifId) {
       try {
-        if (ordersListenerUnsub) { ordersListenerUnsub(); ordersListenerUnsub = null; }
-        const ordersRef = collection(db, 'orders');
-        const qOrders = query(ordersRef, where('customerId', '==', uid), orderBy('createdAt', 'desc'));
-        const pageLoadSeconds = Math.floor(Date.now() / 1000);
-        ordersListenerUnsub = onSnapshot(qOrders, (snapshot) => {
+        const notifRef = doc(db, 'notifications', notifId);
+        await updateDoc(notifRef, {
+          isRead: true
+        });
+        console.log('Notification marked as read:', notifId);
+      } catch (error) {
+        console.error('Error marking notification as read:', error);
+      }
+    }
+
+    // Handle notification click - navigate to profile/orders page
+    function handleNotificationClick(notifId) {
+      if (notifId) {
+        markAsRead(notifId);
+      }
+      toggleNotifDropdown(false);
+      window.location.href = 'profile.html';
+    }
+
+    // Load existing notifications on page load
+    async function loadExistingNotifications(uid) {
+      try {
+        const notificationsRef = collection(db, 'notifications');
+        const qNotifications = query(
+          notificationsRef,
+          where('recipientId', '==', uid),
+          where('type', '==', 'order_status'),
+          orderBy('createdAt', 'desc')
+        );
+
+        const snapshot = await getDocs(qNotifications);
+        
+        // Count unread notifications
+        let unreadCount = 0;
+        
+        snapshot.forEach((doc) => {
+          const data = { id: doc.id, ...doc.data() };
+          addNotificationCard(data);
+          if (!data.isRead) {
+            unreadCount++;
+          }
+        });
+
+        // Update badge with existing unread count
+        unseenCount = unreadCount;
+        if (notifBadge && unreadCount > 0) {
+          notifBadge.textContent = String(unreadCount);
+          notifBadge.style.display = 'inline-block';
+        }
+
+      } catch (error) {
+        console.error('Error loading existing notifications:', error);
+      }
+    }
+
+    // Listen for new notifications
+    function listenToNotificationsFromFirestore(uid) {
+      try {
+        if (notificationsListenerUnsub) {
+          notificationsListenerUnsub();
+          notificationsListenerUnsub = null;
+        }
+
+        const notificationsRef = collection(db, 'notifications');
+        const qNotifications = query(
+          notificationsRef,
+          where('recipientId', '==', uid),
+          where('type', '==', 'order_status'),
+          orderBy('createdAt', 'desc')
+        );
+        
+        const pageLoadTime = new Date();
+
+        notificationsListenerUnsub = onSnapshot(qNotifications, (snapshot) => {
           snapshot.docChanges().forEach((change) => {
-            const data = { id: change.doc.id, ...change.doc.data() };
-            const createdSec = data.createdAt?.seconds || 0;
-            if (change.type === 'added' && createdSec >= pageLoadSeconds) {
-              pushNotification({
-                title: 'Order placed',
-                subtitle: `#${data.id.substring(0,8)} • Total: ₱${(data.total||0).toFixed(2)}`,
-                icon: '🛒'
-              });
-            }
-            if (change.type === 'modified') {
-              const status = data.status || 'updated';
-              pushNotification({
-                title: `Order ${status}`,
-                subtitle: `#${data.id.substring(0,8)} • Updated ${new Date().toLocaleTimeString()}`,
-                icon: status === 'cancelled' ? '❌' : '🔔'
-              });
-            }
-            if (change.type === 'removed') {
-              pushNotification({
-                title: 'Order removed',
-                subtitle: `#${data.id.substring(0,8)} was removed`,
-                icon: '🗑️'
-              });
+            if (change.type === 'added') {
+              const data = { id: change.doc.id, ...change.doc.data() };
+              const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+
+              // Only show if it's a NEW notification (created after page load)
+              if (createdAt >= pageLoadTime) {
+                addNotificationCard(data);
+              }
             }
           });
         });
+
+        console.log('Customer notifications listener active');
       } catch (e) {
         console.error('Notification listener error:', e);
       }
     }
+    // ========== END NOTIFICATION SYSTEM ==========
 
-    // Filter & Sort Modal Functions
-    function showFilterSortModal() {
-      document.getElementById('filterSortModal').classList.add('open');
-      document.body.style.overflow = 'hidden';
+    // Filter & Sort Dropdown
+    const filterSortBtn = document.getElementById('filterSortBtn');
+    const filterSortDropdown = document.getElementById('filterSortDropdown');
+
+    function toggleFilterSortDropdown() {
+      const isOpen = filterSortDropdown.classList.contains('open');
+      filterSortDropdown.classList.toggle('open', !isOpen);
+      filterSortDropdown.setAttribute('aria-hidden', String(isOpen));
+      filterSortBtn.setAttribute('aria-expanded', String(!isOpen));
     }
 
-    function closeFilterSortModal() {
-      document.getElementById('filterSortModal').classList.remove('open');
-      document.body.style.overflow = '';
+    function closeFilterSortDropdown() {
+      filterSortDropdown.classList.remove('open');
+      filterSortDropdown.setAttribute('aria-hidden', 'true');
+      filterSortBtn.setAttribute('aria-expanded', 'false');
     }
 
-    document.getElementById('filterSortBtnMobile').onclick = () => {
-      closeMobileNav();
-      showFilterSortModal();
-    };
-    document.getElementById('closeFilterSortBtn').onclick = closeFilterSortModal;
+    if (filterSortBtn) {
+      filterSortBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFilterSortDropdown();
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      const wrapper = document.querySelector('.filter-sort-wrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        closeFilterSortDropdown();
+      }
+    });
+
     document.getElementById('applyFilters').onclick = applyFilters;
     document.getElementById('clearFilters').onclick = clearFilters;
-
-    document.getElementById('filterSortModal').onclick = (e) => {
-      if (e.target.id === 'filterSortModal') {
-        closeFilterSortModal();
-      }
-    };
 
     document.getElementById('closeProductModalBtn').onclick = () => {
       document.getElementById('productModal').classList.remove('open');
@@ -679,63 +814,28 @@
       }
     };
 
-    // Logout functionality
+    // Logout
     const logoutModal = document.getElementById('logoutModal');
-    
+
     function showLogoutModal() {
       logoutModal.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
-    
+
     function closeLogoutModal() {
       logoutModal.classList.remove('open');
       document.body.style.overflow = '';
     }
 
     document.getElementById('cancelLogoutBtn').onclick = closeLogoutModal;
-
-    document.getElementById('confirmLogoutBtn').onclick = function() {
+    document.getElementById('confirmLogoutBtn').onclick = function () {
       closeLogoutModal();
       window.location.href = "index.html";
     };
-
     logoutModal.onclick = (e) => {
       if (e.target === logoutModal) closeLogoutModal();
     };
 
-    // Burger menu / Drawer
-    const burgerMenuBtn = document.getElementById('burgerMenuBtn');
-    const mobileNav = document.getElementById('mobileNav');
-    const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
-    
-    function openMobileNav() {
-      mobileNav.classList.add('open');
-      mobileNav.setAttribute('aria-hidden', 'false');
-      mobileNavBackdrop.hidden = false;
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function closeMobileNav() {
-      mobileNav.classList.remove('open');
-      mobileNav.setAttribute('aria-hidden', 'true');
-      mobileNavBackdrop.hidden = true;
-      document.body.style.overflow = '';
-    }
-    
-    burgerMenuBtn.onclick = openMobileNav;
-    mobileNavBackdrop.onclick = closeMobileNav;
-    window.closeMobileNav = closeMobileNav;
-
-    // Welcome Modal
-    window.addEventListener('DOMContentLoaded', function() {
-      if (sessionStorage.getItem('showWelcomeModal') === 'true') {
-        document.getElementById('welcomeModal').classList.add('open');
-        sessionStorage.removeItem('showWelcomeModal');
-      }
-      
-      loadProducts();
-    });
-    
     // Profile dropdown
     const profileIconBtn = document.getElementById('profileIconBtn');
     const profileMenu = document.getElementById('profileMenu');
@@ -806,16 +906,26 @@
     confirmModal.onclick = (e) => {
       if (e.target.id === 'confirmModal') closeConfirm();
     };
-    
+
     document.getElementById('closeWelcomeModalBtn').onclick = () => {
       document.getElementById('welcomeModal').classList.remove('open');
     };
-    
+
     document.getElementById('welcomeModal').onclick = (e) => {
       if (e.target.id === 'welcomeModal') {
         document.getElementById('welcomeModal').classList.remove('open');
       }
     };
+
+    // Load products on page load
+    window.addEventListener('DOMContentLoaded', function () {
+      if (sessionStorage.getItem('showWelcomeModal') === 'true') {
+        document.getElementById('welcomeModal').classList.add('open');
+        sessionStorage.removeItem('showWelcomeModal');
+      }
+      loadProducts();
+    });
   </script>
 </body>
+
 </html>

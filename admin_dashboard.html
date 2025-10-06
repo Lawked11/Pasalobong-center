@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -9,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="admin_dashboard.css">
 </head>
+
 <body class="no-scroll">
   <header>
     <nav class="navbar">
@@ -48,10 +50,10 @@
     </ul>
   </aside>
   <div id="drawerBackdrop" class="drawer-backdrop" hidden></div>
-  
+
   <main>
     <section class="dashboard-section">
-      
+
       <!-- Dashboard Overview Cards -->
       <div class="dashboard-overview">
         <div class="overview-card">
@@ -62,7 +64,7 @@
             <span class="card-subtitle">Active products</span>
           </div>
         </div>
-        
+
         <div class="overview-card">
           <div class="card-icon">👥</div>
           <div class="card-content">
@@ -71,7 +73,7 @@
             <span class="card-subtitle">Registered users</span>
           </div>
         </div>
-        
+
         <div class="overview-card">
           <div class="card-icon">📋</div>
           <div class="card-content">
@@ -80,7 +82,7 @@
             <span class="card-subtitle">Pending orders</span>
           </div>
         </div>
-        
+
         <div class="overview-card">
           <div class="card-icon">💰</div>
           <div class="card-content">
@@ -90,7 +92,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Quick Actions -->
       <div class="quick-actions">
         <h2>Quick Actions</h2>
@@ -102,7 +104,7 @@
               <p>Add, edit, or view products</p>
             </div>
           </a>
-          
+
           <a href="users.html" class="action-btn">
             <div class="btn-icon">👥</div>
             <div class="btn-content">
@@ -110,7 +112,7 @@
               <p>View and manage user accounts</p>
             </div>
           </a>
-          
+
           <a href="orders.html" class="action-btn">
             <div class="btn-icon">📋</div>
             <div class="btn-content">
@@ -122,7 +124,7 @@
       </div>
     </section>
   </main>
-  
+
   <!-- Logout Modal -->
   <div id="logoutModal" class="logout-modal">
     <div class="logout-modal-content">
@@ -134,7 +136,7 @@
       </div>
     </div>
   </div>
-  
+
   <script>
     // UI Only: Modal logic for logout (no backend)
     const logoutModal = document.getElementById('logoutModal');
@@ -146,7 +148,7 @@
       logoutModal.classList.remove('open');
       document.body.style.overflow = '';
     };
-    logoutModal.onclick = function(e) {
+    logoutModal.onclick = function (e) {
       if (e.target === logoutModal) {
         logoutModal.classList.remove('open');
         document.body.style.overflow = '';
@@ -185,7 +187,7 @@
   <script type="module">
     import { auth, db } from './firebase.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { collection, query, orderBy, onSnapshot, limit } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { collection, query, where, orderBy, onSnapshot, limit, doc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     const notifBtn = document.getElementById('notifBtn');
     const notifBadge = document.getElementById('notifBadge');
@@ -194,7 +196,7 @@
     const notifEmpty = document.getElementById('notifEmpty');
 
     let unseenCount = 0;
-    const pageLoadSeconds = Math.floor(Date.now() / 1000);
+    const pageLoadTime = new Date();
     const maxItems = 10;
 
     function toggleDropdown(open) {
@@ -208,26 +210,125 @@
       }
     }
 
-    function addNotifItem(order) {
+    // Mark notification as read
+    async function markAsRead(notifId) {
+      try {
+        const notifRef = doc(db, 'notifications', notifId);
+        await updateDoc(notifRef, {
+          isRead: true
+        });
+        console.log('Notification marked as read:', notifId);
+      } catch (error) {
+        console.error('Error marking notification as read:', error);
+      }
+    }
+
+    // Handle notification click - mark as read and navigate
+    function handleNotificationClick(notifId, orderId) {
+      if (notifId) {
+        markAsRead(notifId);
+      }
+      
+      // Navigate to orders page
+      if (orderId) {
+        window.location.href = `orders.html?orderId=${orderId}`;
+      } else {
+        window.location.href = 'orders.html';
+      }
+    }
+
+    function addNotifItem(data) {
       const item = document.createElement('div');
       item.className = 'notif-item';
-      const orderIdShort = (order.id || '').substring(0, 8);
-      const createdAt = order.createdAt?.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleString() : 'Just now';
-      const total = typeof order.total === 'number' ? `₱${order.total.toFixed(2)}` : 'N/A';
+      
+      // Add unread styling if notification is unread
+      if (!data.isRead) {
+        item.classList.add('notif-unread');
+      }
 
-      item.innerHTML = `
-        <div class="notif-icon">🛒</div>
-        <div class="notif-content">
-          <div class="notif-title">New order received • ${total}</div>
-          <div class="notif-sub">#${orderIdShort} • ${createdAt}</div>
-        </div>
-      `;
+      // Check if it's from notifications collection or orders collection
+      const isFromNotifications = data.title && data.message;
+
+      if (isFromNotifications) {
+        // Display notification from /notifications collection with products
+        let productsHtml = '';
+        
+        // Check if products array exists and has items
+        if (data.products && data.products.length > 0) {
+          productsHtml = '<div class="notif-products">';
+          data.products.forEach((product, index) => {
+            // Show max 3 products to avoid clutter
+            if (index < 3) {
+              productsHtml += `
+                <div class="notif-product-item">
+                  • ${product.name} (x${product.quantity}) - ₱${product.price.toFixed(2)}
+                </div>
+              `;
+            }
+          });
+          
+          // If there are more than 3 products, show a "more" indicator
+          if (data.products.length > 3) {
+            productsHtml += `<div class="notif-product-more">+ ${data.products.length - 3} more item(s)</div>`;
+          }
+          
+          productsHtml += '</div>';
+        }
+
+        // Add mark as read button if unread
+        const markAsReadBtn = !data.isRead ? `
+          <button class="mark-read-btn" data-notif-id="${data.id}">Mark as Read</button>
+        ` : '';
+
+        item.innerHTML = `
+          <div class="notif-icon">🔔</div>
+          <div class="notif-content" data-notif-id="${data.id}" data-order-id="${data.orderId || ''}">
+            <div class="notif-title">${data.title}</div>
+            <div class="notif-sub">${data.message}</div>
+            ${productsHtml}
+            ${markAsReadBtn}
+          </div>
+        `;
+      } else {
+        // Display notification from /orders collection (fallback)
+        const orderIdShort = (data.id || '').substring(0, 8);
+        const createdAt = data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000).toLocaleString() : 'Just now';
+        const total = typeof data.total === 'number' ? `₱${data.total.toFixed(2)}` : 'N/A';
+
+        // Build products list for orders collection fallback
+        let productsHtml = '';
+        if (data.items && data.items.length > 0) {
+          productsHtml = '<div class="notif-products">';
+          data.items.forEach((product, index) => {
+            if (index < 3) {
+              productsHtml += `
+                <div class="notif-product-item">
+                  • ${product.name} (x${product.quantity}) - ₱${product.price.toFixed(2)}
+                </div>
+              `;
+            }
+          });
+          if (data.items.length > 3) {
+            productsHtml += `<div class="notif-product-more">+ ${data.items.length - 3} more item(s)</div>`;
+          }
+          productsHtml += '</div>';
+        }
+
+        item.innerHTML = `
+          <div class="notif-icon">🛒</div>
+          <div class="notif-content" data-order-id="${data.id}">
+            <div class="notif-title">New order received • ${total}</div>
+            <div class="notif-sub">#${orderIdShort} • ${createdAt}</div>
+            ${productsHtml}
+          </div>
+        `;
+      }
 
       if (notifEmpty) notifEmpty.style.display = 'none';
       notifList.insertBefore(item, notifList.firstChild);
 
       // Trim list
-      while (notifList.children.length > maxItems + 1) { // +1 accounts for empty div possibly
+      while (notifList.children.length > maxItems + 1) {
         const last = notifList.lastElementChild;
         if (last && last.id !== 'notifEmpty') notifList.removeChild(last);
         else break;
@@ -250,29 +351,105 @@
       if (!within) toggleDropdown(false);
     });
 
-    // Auth gate (admin only) and realtime listener for new orders
+    // Event delegation for notification clicks and mark as read buttons
+    notifList.addEventListener('click', (e) => {
+      // Handle "Mark as Read" button click
+      if (e.target.classList.contains('mark-read-btn')) {
+        e.stopPropagation();
+        const notifId = e.target.dataset.notifId;
+        if (notifId) {
+          markAsRead(notifId);
+          // Remove the button and unread styling
+          e.target.remove();
+          const notifItem = e.target.closest('.notif-item');
+          if (notifItem) {
+            notifItem.classList.remove('notif-unread');
+          }
+        }
+        return;
+      }
+
+      // Handle notification content click
+      const notifContent = e.target.closest('.notif-content');
+      if (notifContent) {
+        const notifId = notifContent.dataset.notifId;
+        const orderId = notifContent.dataset.orderId;
+        handleNotificationClick(notifId, orderId);
+      }
+    });
+
+    // ========================================================================
+    // DUAL NOTIFICATION SYSTEM: Listen to both orders AND notifications collections
+    // ========================================================================
     onAuthStateChanged(auth, async (user) => {
-      if (!user) return; // silently ignore on dashboard UI
+      if (!user) return;
+
       try {
-        // Lightweight: listen without role fetch; orders.html already enforces admin for management
-        const ordersRef = collection(db, 'orders');
-        const q = query(ordersRef, orderBy('createdAt', 'desc'), limit(50));
-        onSnapshot(q, (snapshot) => {
-          snapshot.docChanges().forEach((change) => {
-            if (change.type === 'added') {
-              const data = { id: change.doc.id, ...change.doc.data() };
-              const createdSec = data.createdAt?.seconds || 0;
-              if (data.status === 'pending' && createdSec >= pageLoadSeconds) {
-                addNotifItem(data);
+        // METHOD 1: Listen to /notifications collection
+        const notificationsRef = collection(db, 'notifications');
+        const qNotifications = query(
+          notificationsRef,
+          where('recipientId', 'in', [user.uid, 'all_admins']),
+          orderBy('createdAt', 'desc'),
+          limit(20)
+        );
+
+        onSnapshot(qNotifications, 
+          (snapshot) => {
+            console.log('Notifications snapshot received:', snapshot.size, 'docs');
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === 'added') {
+                const data = { id: change.doc.id, ...change.doc.data() };
+                console.log('New notification detected:', data);
+                const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : new Date();
+
+                // Show unread notifications OR notifications created after page load
+                if (!data.isRead || createdAt >= pageLoadTime) {
+                  console.log('Adding notification to UI');
+                  addNotifItem(data);
+                }
               }
-            }
-          });
-        });
+            });
+          },
+          (error) => {
+            console.error('Notification query error:', error);
+            console.error('Error code:', error.code);
+            console.error('Error message:', error.message);
+          }
+        );
+
+        // METHOD 2: Listen to /orders collection directly (for new pending orders)
+        const ordersRef = collection(db, 'orders');
+        const qOrders = query(ordersRef, orderBy('createdAt', 'desc'), limit(50));
+
+        onSnapshot(qOrders, 
+          (snapshot) => {
+            console.log('Orders snapshot received:', snapshot.size, 'docs');
+            snapshot.docChanges().forEach((change) => {
+              if (change.type === 'added') {
+                const data = { id: change.doc.id, ...change.doc.data() };
+                const createdAt = data.createdAt?.toDate ? data.createdAt.toDate() : (data.createdAt?.seconds ? new Date(data.createdAt.seconds * 1000) : new Date());
+
+                // Only show new pending orders created after page load
+                if (data.status === 'pending' && createdAt >= pageLoadTime) {
+                  console.log('Adding new order notification:', data.id);
+                  addNotifItem(data);
+                }
+              }
+            });
+          },
+          (error) => {
+            console.error('Orders query error:', error);
+          }
+        );
+
+        console.log('Admin notification listeners active');
       } catch (e) {
-        // Fail silently; dashboard still usable
-        console.error('Notifications error:', e);
+        console.error('Notifications setup error:', e);
       }
     });
   </script>
+  </script>
 </body>
+
 </html>

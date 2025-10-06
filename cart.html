@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="cart.css">
 </head>
+
 <body>
   <header>
     <nav class="navbar">
@@ -140,7 +142,7 @@
   <script type="module">
     import { auth, db } from './firebase.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { collection, doc, getDoc, updateDoc, deleteDoc, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, onSnapshot, runTransaction, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     let currentUser = null;
     let cartUnsubscribe = null;
@@ -149,6 +151,41 @@
     let userProfile = null;
 
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ========================================================================
+    // UPDATED NOTIFICATION HELPER FUNCTION
+    // Create notification with products list included
+    // ========================================================================
+    async function notifyAdminsOfNewOrder(orderId, orderData) {
+      try {
+        // Create a notification document with recipientId set to "all_admins"
+        // Include the products array so admins can see what was ordered
+        const notificationRef = doc(collection(db, 'notifications'));
+        await setDoc(notificationRef, {
+          title: 'New Order Received',
+          message: `A new order has been placed by ${orderData.customerEmail || 'Customer'}.`,
+          recipientId: 'all_admins', // Special marker for admin notifications
+          type: 'new_order',
+          createdAt: serverTimestamp(),
+          isRead: false,
+          orderId: orderId,
+          orderTotal: orderData.total,
+          customerId: orderData.customerId,
+          customerName: orderData.shippingInfo?.name || 'Customer',
+          // ADD THIS: Include the products array
+          products: orderData.items.map(item => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price
+          }))
+        });
+
+        console.log(`Admin notification created for order: ${orderId}`);
+      } catch (error) {
+        console.error('Error creating admin notification:', error);
+        // Don't throw - order is still successful even if notification fails
+      }
+    }
 
     // Auth state listener
     onAuthStateChanged(auth, (user) => {
@@ -180,14 +217,14 @@
       try {
         const profileRef = doc(db, 'customers', uid, 'profile', 'info');
         const profileDoc = await getDoc(profileRef);
-        
+
         if (profileDoc.exists()) {
           userProfile = profileDoc.data();
           const { firstName, lastName, phoneNumber, shippingAddress } = userProfile;
-          
-          if (firstName && lastName && phoneNumber && 
-              shippingAddress && shippingAddress.street && shippingAddress.city) {
-            
+
+          if (firstName && lastName && phoneNumber &&
+            shippingAddress && shippingAddress.street && shippingAddress.city) {
+
             const fullName = `${firstName} ${lastName}`;
             const fullAddress = [
               shippingAddress.houseNumber,
@@ -197,11 +234,11 @@
               shippingAddress.postalCode,
               shippingAddress.country
             ].filter(part => part && part.trim()).join(', ');
-            
+
             document.getElementById('displayName').textContent = fullName;
             document.getElementById('displayPhone').textContent = phoneNumber;
             document.getElementById('displayAddress').textContent = fullAddress;
-            
+
             document.getElementById('shippingDisplay').style.display = 'block';
             document.getElementById('noShippingInfo').style.display = 'none';
             document.getElementById('editShippingBtn').style.display = 'block';
@@ -307,9 +344,9 @@
     function updateSelectAllState() {
       const selectAllCheckbox = document.getElementById('selectAll');
       const itemCheckboxes = document.querySelectorAll('.item-checkbox');
-      
+
       if (itemCheckboxes.length === 0) return;
-      
+
       const allChecked = Array.from(itemCheckboxes).every(cb => cb.checked);
       selectAllCheckbox.checked = allChecked;
     }
@@ -391,7 +428,7 @@
       }
 
       const missingFields = [];
-      
+
       if (!userProfile.firstName || !userProfile.firstName.trim()) {
         missingFields.push('First Name');
       }
@@ -401,7 +438,7 @@
       if (!userProfile.phoneNumber || !userProfile.phoneNumber.trim()) {
         missingFields.push('Phone Number');
       }
-      
+
       const address = userProfile.shippingAddress;
       if (!address || !address.street || !address.street.trim()) {
         missingFields.push('Street Address');
@@ -434,14 +471,14 @@
       }
 
       const profileStatus = checkProfileComplete();
-      
+
       if (!profileStatus.complete) {
         showProfileIncompleteModal(profileStatus.missingFields);
         return;
       }
 
       const selectedProducts = cartItems.filter(item => selectedItems.has(item.id));
-      
+
       showConfirm(`Proceed to checkout with ${selectedProducts.length} item(s)?`, async () => {
         try {
           const checkoutBtn = document.getElementById('checkoutBtn');
@@ -477,23 +514,25 @@
             updatedAt: serverTimestamp()
           };
 
+          let createdOrderId = null;
+
           await runTransaction(db, async (transaction) => {
             const stockChecks = [];
-            
+
             for (const item of selectedProducts) {
               const productId = item.productId || item.id;
               const productRef = doc(db, 'products', productId);
               const productDoc = await transaction.get(productRef);
-              
+
               if (!productDoc.exists()) {
                 throw new Error(`Product "${item.name}" no longer exists.`);
               }
-              
+
               const currentStock = productDoc.data().stock;
               if (currentStock < item.quantity) {
                 throw new Error(`Insufficient stock for "${item.name}". Available: ${currentStock}, Requested: ${item.quantity}`);
               }
-              
+
               stockChecks.push({
                 ref: productRef,
                 currentStock: currentStock,
@@ -502,6 +541,7 @@
             }
 
             const orderRef = doc(collection(db, 'orders'));
+            createdOrderId = orderRef.id;
             transaction.set(orderRef, orderData);
 
             stockChecks.forEach(check => {
@@ -517,14 +557,20 @@
             });
           });
 
+          // =====================================================================
+          // NOTIFICATION TRIGGER: Notify admins about the new order
+          // =====================================================================
+          if (createdOrderId) {
+            await notifyAdminsOfNewOrder(createdOrderId, orderData);
+          }
+
           selectedItems.clear();
-          // Show success modal instead of alert
           const successModal = document.getElementById('successModal');
           if (successModal) successModal.classList.add('open');
-          
+
         } catch (error) {
           console.error('Error during checkout:', error);
-          
+
           if (error.message.includes('Insufficient stock') || error.message.includes('no longer exists')) {
             alert(error.message);
           } else {
@@ -541,13 +587,13 @@
     function showProfileIncompleteModal(missingFields) {
       const modal = document.getElementById('profileIncompleteModal');
       const message = document.getElementById('profileIncompleteMessage');
-      
+
       if (missingFields.length === 1 && missingFields[0] === 'All profile information') {
         message.textContent = 'Please complete your profile information before checking out. You need to fill in your personal details and shipping address.';
       } else {
         message.textContent = `Please complete the following information in your profile before checking out: ${missingFields.join(', ')}.`;
       }
-      
+
       modal.classList.add('open');
     }
 
@@ -558,7 +604,7 @@
     document.getElementById('editShippingBtn').onclick = () => {
       window.location.href = 'profile.html';
     };
-    
+
     document.getElementById('checkoutBtn').onclick = checkout;
 
     document.getElementById('goToProfileBtn').onclick = () => {
@@ -598,7 +644,6 @@
       if (e.target === profileIncompleteModal) closeProfileIncompleteModal();
     };
 
-    // Success modal handlers
     document.getElementById('successOkBtn').onclick = () => {
       successModal.classList.remove('open');
     };
@@ -608,4 +653,5 @@
 
   </script>
 </body>
+
 </html>
