@@ -11,9 +11,12 @@
 <body>
   <main>
     <section class="auth-bg">
+      <div class="auth-bg-pattern"></div>
+      <div class="auth-bg-logo"></div>
       <div class="auth-card" id="authCard">
-        <div class="logo-circle">
-          <span>🍬</span>
+        <div class="logo-container">
+          <h1 class="logo-text">PASALOBONG</h1>
+          <p class="logo-subtitle">Center</p>
         </div>
         <!-- Login Form (default) -->
         <form class="auth-form" id="loginForm" autocomplete="off">
@@ -25,7 +28,7 @@
             <input type="password" id="login-password" required placeholder="Password" autocomplete="current-password">
             <span class="eye-icon" id="login-password-eye" tabindex="0" aria-label="Show password" role="button">
               <!-- Eye open icon SVG -->
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
                 <circle cx="12" cy="12" r="3"/>
               </svg>
@@ -43,7 +46,7 @@
           <div class="input-eye-row">
             <input type="password" id="signup-password" required placeholder="Password" autocomplete="new-password">
             <span class="eye-icon" id="signup-password-eye" tabindex="0" aria-label="Show password" role="button">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
                 <circle cx="12" cy="12" r="3"/>
               </svg>
@@ -53,7 +56,7 @@
           <div class="input-eye-row">
             <input type="password" id="signup-confirm-password" required placeholder="Confirm Password" autocomplete="new-password">
             <span class="eye-icon" id="signup-confirm-password-eye" tabindex="0" aria-label="Show confirm password" role="button">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
                 <circle cx="12" cy="12" r="3"/>
               </svg>
@@ -88,8 +91,8 @@
     };
 
     // SVGs for eye open and closed
-    const eyeOpenSvg = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
-    const eyeClosedSvg = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.12 10.12 0 0 1 12 19c-7 0-11-7-11-7a18.46 18.46 0 0 1 5.06-5.94"/><path d="M1 1l22 22"/><path d="M9.53 9.53a3.5 3.5 0 0 1 4.95 4.95"/><path d="M12 12v.01"/></svg>`;
+    const eyeOpenSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const eyeClosedSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#74432A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.12 10.12 0 0 1 12 19c-7 0-11-7-11-7a18.46 18.46 0 0 1 5.06-5.94"/><path d="M1 1l22 22"/><path d="M9.53 9.53a3.5 3.5 0 0 1 4.95 4.95"/><path d="M12 12v.01"/></svg>`;
 
     function setupEyeToggle(inputId, eyeId) {
       const input = document.getElementById(inputId);
