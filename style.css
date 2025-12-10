@@ -5,7 +5,6 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-  background: #f5f7fa;
   color: #1a1a1a;
   width: 100%;
   overflow-x: hidden;
@@ -21,6 +20,7 @@ main {
   display: flex;
   width: 100%;
 }
+/* Full screen blurred background image */
 .auth-bg {
   width: 100%;
   min-height: 100vh;
@@ -28,23 +28,32 @@ main {
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  background: linear-gradient(135deg, #fef9f3 0%, #fff5e8 25%, #ffe8d6 50%, #f5e6d3 75%, #f0ede8 100%);
-  background-repeat: no-repeat;
   position: relative;
+  overflow: hidden;
 }
+/* Background image with blur effect */
+.auth-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('images/bg.png') center/cover no-repeat;
+  z-index: -2;
+  filter: blur(8px);
+  transform: scale(1.1); /* Scale up to avoid blur edges */
+}
+/* Dark overlay for better contrast */
 .auth-bg::after {
   content: "";
   position: absolute;
-  right: -5%; 
-  bottom: -5%;
-  width: 500px; 
-  height: 500px;
-  background: radial-gradient(circle, rgba(106, 44, 26, 0.08) 0%, rgba(141, 58, 42, 0.05) 40%, transparent 70%);
-  z-index: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(60px);
-  animation: float 25s ease-in-out infinite reverse;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: -1;
 }
 .auth-bg-pattern {
   position: absolute;
@@ -79,11 +88,11 @@ main {
   transform: translate(-50%, -50%) rotate(-25deg);
   font-size: 12rem;
   font-weight: 900;
-  color: rgba(106, 44, 26, 0.08);
+  color: rgba(255, 255, 255, 0.1);
   letter-spacing: 30px;
   white-space: nowrap;
   font-family: 'Inter', Arial, sans-serif;
-  text-shadow: 0 0 40px rgba(106, 44, 26, 0.1);
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
 }
 .auth-bg-logo::after {
   content: "CENTER";
@@ -93,25 +102,11 @@ main {
   transform: translate(-50%, -50%) rotate(-25deg);
   font-size: 6rem;
   font-weight: 700;
-  color: rgba(249, 168, 37, 0.06);
+  color: rgba(255, 255, 255, 0.08);
   letter-spacing: 40px;
   white-space: nowrap;
   font-family: 'Inter', Arial, sans-serif;
-  text-shadow: 0 0 30px rgba(249, 168, 37, 0.08);
-}
-.auth-bg::before {
-  content: "";
-  position: absolute;
-  left: -8%;
-  top: -8%;
-  width: 550px; 
-  height: 550px;
-  background: radial-gradient(circle, rgba(249, 168, 37, 0.12) 0%, rgba(255, 183, 77, 0.08) 40%, transparent 70%);
-  z-index: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(50px);
-  animation: float 20s ease-in-out infinite;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
 }
 @keyframes float {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -120,8 +115,8 @@ main {
 .auth-card {
   position: relative;
   z-index: 1;
-  background: #ffffff;
-  box-shadow: 0 25px 80px rgba(106, 44, 26, 0.25), 0 8px 24px rgba(106, 44, 26, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.2);
   border-radius: 24px;
   padding: 3rem 2.5rem;
   min-width: 460px;
@@ -134,6 +129,7 @@ main {
   margin: 2rem auto;
   border: 2px solid #f8eed7;
   overflow: visible;
+  backdrop-filter: blur(8px);
 }
 .auth-card::before {
   content: "";
@@ -157,7 +153,7 @@ main {
   pointer-events: none;
 }
 .auth-card:hover {
-  box-shadow: 0 30px 100px rgba(106, 44, 26, 0.3), 0 12px 32px rgba(106, 44, 26, 0.2);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.25);
   transform: translateY(-4px);
   border-color: #F9A825;
 }
@@ -186,7 +182,7 @@ main {
   margin: 0;
   letter-spacing: 1px;
   line-height: 1.2;
-  text-shadow: 0 2px 4px rgba(106, 44, 26, 0.1);
+  text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);
 }
 .logo-subtitle {
   font-size: 0.875rem;
@@ -232,7 +228,7 @@ main {
   border-radius: 10px;
   font-size: 0.9375rem;
   margin-bottom: 0;
-  background: #fffbe7;
+  background: rgba(255, 251, 231, 0.9);
   transition: all 0.25s ease;
   font-family: inherit;
   outline: none;
@@ -526,5 +522,21 @@ main {
 
   .auth-form button[type="submit"] {
     padding: 0.9rem 1.4rem;
+  }
+}
+
+/* Mobile adjustments for blurred background */
+@media (max-width: 768px) {
+  .auth-bg::before {
+    filter: blur(4px); /* Less blur on mobile for better performance */
+    transform: scale(1.05);
+  }
+  
+  .auth-bg::after {
+    background: rgba(0, 0, 0, 0.5); /* Darker overlay on mobile for better readability */
+  }
+  
+  .auth-card {
+    backdrop-filter: blur(4px); /* Less blur on mobile card for performance */
   }
 }

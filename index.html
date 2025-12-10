@@ -11,8 +11,11 @@
 <body>
   <main>
     <section class="auth-bg">
-      <div class="auth-bg-pattern"></div>
-      <div class="auth-bg-logo"></div>
+      <!-- Full screen background image -->
+      <div class="fullscreen-bg-image"></div>
+      
+      <div class="auth-overlay"></div>
+      
       <div class="auth-card" id="authCard">
         <div class="logo-container">
           <h1 class="logo-text">PASALOBONG</h1>
@@ -21,9 +24,9 @@
         <!-- Login Form (default) -->
         <form class="auth-form" id="loginForm" autocomplete="off">
           <h2>Sign in to Pasalobong Center</h2>
-          <label for="login-email">Email</label>
+          <label for="login-email">EMAIL</label>
           <input type="email" id="login-email" required placeholder="you@example.com" autocomplete="username">
-          <label for="login-password">Password</label>
+          <label for="login-password">PASSWORD</label>
           <div class="input-eye-row">
             <input type="password" id="login-password" required placeholder="Password" autocomplete="current-password">
             <span class="eye-icon" id="login-password-eye" tabindex="0" aria-label="Show password" role="button">
@@ -40,9 +43,9 @@
         <!-- Signup Form (hidden by default) -->
         <form class="auth-form" id="signupForm" autocomplete="off" style="display:none;">
           <h2>Create an account</h2>
-          <label for="signup-email">Email</label>
+          <label for="signup-email">EMAIL</label>
           <input type="email" id="signup-email" required placeholder="you@example.com" autocomplete="username">
-          <label for="signup-password">Password</label>
+          <label for="signup-password">PASSWORD</label>
           <div class="input-eye-row">
             <input type="password" id="signup-password" required placeholder="Password" autocomplete="new-password">
             <span class="eye-icon" id="signup-password-eye" tabindex="0" aria-label="Show password" role="button">
@@ -52,7 +55,7 @@
               </svg>
             </span>
           </div>
-          <label for="signup-confirm-password">Confirm Password</label>
+          <label for="signup-confirm-password">CONFIRM PASSWORD</label>
           <div class="input-eye-row">
             <input type="password" id="signup-confirm-password" required placeholder="Confirm Password" autocomplete="new-password">
             <span class="eye-icon" id="signup-confirm-password-eye" tabindex="0" aria-label="Show confirm password" role="button">
