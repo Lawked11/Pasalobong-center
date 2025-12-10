@@ -42,7 +42,7 @@ function showNotification(message, type = "info", title = "") {
 }
 
 // Listen for both modal and inline (auth-card) form submission (login & signup)
-document.addEventListener('submit', async function(e) {
+document.addEventListener('submit', async function (e) {
   if (e.target.classList.contains('modal-form') || e.target.classList.contains('auth-form')) {
     e.preventDefault();
     let isLogin = false;
@@ -63,15 +63,15 @@ document.addEventListener('submit', async function(e) {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        
+
         // Check user role by looking in both collections
         let userRole = null;
         let redirectUrl = null;
-        
+
         // Check if user is admin
         const adminDocRef = doc(db, 'admins', user.uid);
         const adminDoc = await getDoc(adminDocRef);
-        
+
         if (adminDoc.exists()) {
           userRole = adminDoc.data().role;
           redirectUrl = 'admin_dashboard.html';
@@ -79,35 +79,35 @@ document.addEventListener('submit', async function(e) {
           // Check if user is customer
           const customerDocRef = doc(db, 'customers', user.uid);
           const customerDoc = await getDoc(customerDocRef);
-          
+
           if (customerDoc.exists()) {
             userRole = customerDoc.data().role;
             redirectUrl = 'home.html';
           }
         }
-        
+
         // If no role found, show error
         if (!userRole) {
           showNotification('User account not found in database. Please contact support.', 'error');
           await signOut(auth);
           return;
         }
-        
+
         showNotification('Login successful! Redirecting...', 'success');
         if (document.getElementById('modalOverlay')) {
           document.getElementById('modalOverlay').classList.remove('open');
         }
         sessionStorage.setItem('showWelcomeModal', 'true');
         sessionStorage.setItem('userRole', userRole);
-        
+
         setTimeout(() => {
           window.location.href = redirectUrl;
         }, 1100);
       } catch (error) {
         console.error('Login error:', error);
         let errorMessage = 'Login failed: ';
-        
-        switch(error.code) {
+
+        switch (error.code) {
           case 'auth/invalid-email':
             errorMessage += 'Invalid email address format.';
             break;
@@ -126,7 +126,7 @@ document.addEventListener('submit', async function(e) {
           default:
             errorMessage += error.message;
         }
-        
+
         showNotification(errorMessage, 'error');
       }
     }
@@ -149,18 +149,18 @@ document.addEventListener('submit', async function(e) {
         showNotification('Passwords do not match!', 'error');
         return;
       }
-      
+
       // Validate password length
       if (password.length < 6) {
         showNotification('Password must be at least 6 characters long.', 'error');
         return;
       }
-      
+
       try {
         // Create user account
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        
+
         // PROFESSIONAL APPROACH: Store in separate top-level collection
         // Path: customers/{uid}
         const customerDocRef = doc(db, 'customers', user.uid);
@@ -172,7 +172,7 @@ document.addEventListener('submit', async function(e) {
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp()
         });
-        
+
         // Create initial profile document in subcollection
         const profileDocRef = doc(db, 'customers', user.uid, 'profile', 'info');
         await setDoc(profileDocRef, {
@@ -193,8 +193,12 @@ document.addEventListener('submit', async function(e) {
           defaultShipping: false,
           createdAt: serverTimestamp()
         });
-        
+
         showNotification('Account created successfully! Please login.', 'success');
+
+        // Clear signup form fields
+        form.reset();
+
         if (document.getElementById('modalOverlay')) {
           document.getElementById('modalOverlay').classList.remove('open');
         }
@@ -205,8 +209,8 @@ document.addEventListener('submit', async function(e) {
       } catch (error) {
         console.error('Signup error:', error);
         let errorMessage = 'Signup failed: ';
-        
-        switch(error.code) {
+
+        switch (error.code) {
           case 'auth/email-already-in-use':
             errorMessage += 'This email is already registered. Please login instead.';
             break;
@@ -222,7 +226,7 @@ document.addEventListener('submit', async function(e) {
           default:
             errorMessage += error.message;
         }
-        
+
         showNotification(errorMessage, 'error');
       }
     }
