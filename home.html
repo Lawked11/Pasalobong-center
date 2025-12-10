@@ -14,11 +14,7 @@
 <body>
   <header>
     <nav class="navbar">
-      <div class="navbar-left"></div>
-      <div class="navbar-center">
-        PASALOBONG CENTER
-      </div>
-      <div class="navbar-right">
+      <div class="navbar-left">
         <div class="notif-wrapper" id="notifWrapper" aria-haspopup="true">
           <button id="notifBtn" class="notif-btn" aria-label="Notifications" aria-expanded="false">🔔
             <span id="notifBadge" class="notif-badge">0</span>
@@ -30,6 +26,11 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="navbar-center">
+        PASALOBONG CENTER
+      </div>
+      <div class="navbar-right">
         <a href="cart.html" id="cartBtn" class="cart-btn" aria-label="Cart">
           <span class="cart-icon" aria-hidden="true">🛒</span>
           <span id="cartCount" class="cart-count" aria-live="polite">0</span>
@@ -59,6 +60,129 @@
   </header>
 
   <main>
+    <section class="hero-section">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <div class="hero-eyebrow">Kakanin & seafood favorites</div>
+          <h1>Pasalubong fresh from our shores and hometown kitchens.</h1>
+          <p class="hero-subtitle">
+            Curated kakanin, seafood delicacies, and artisan snacks packed to stay fresh—
+            relive a taste of home without hopping on a plane.
+          </p>
+          <div class="hero-actions">
+            <a href="#products" class="btn primary">Shop products</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+             <span>200+</span>
+             <small>Regional bites</small>
+            </div>
+            <div class="stat">
+             <span>Chilled-ready</span>
+             <small>Seafood packs</small>
+            </div>
+            <div class="stat">
+             <span>4.9★</span>
+             <small>Happy shoppers</small>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="floating-card top">
+            <div class="card-title">Best Seller</div>
+            <div class="card-body">
+              <div class="card-row">
+                <div class="dot amber"></div>
+                <div class="card-text">
+                  <div class="label">Bibingka</div>
+                  <div class="muted">₱180 · Laguna</div>
+                </div>
+                <div class="pill">Fresh bake</div>
+              </div>
+              <div class="card-row">
+                <div class="dot green"></div>
+                <div class="card-text">
+                  <div class="label">Garlic Danggit</div>
+                  <div class="muted">₱240 · Cebu</div>
+                </div>
+                <div class="pill outline">Seafood</div>
+              </div>
+            </div>
+          </div>
+          <div class="hero-glow"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="value-props">
+      <div class="container props-grid">
+        <div class="prop-card">
+          <div class="icon">🚚</div>
+          <div class="prop-title">Nationwide delivery</div>
+          <p>Ship to 7k+ islands with insulated packaging for sensitive goods.</p>
+        </div>
+        <div class="prop-card">
+          <div class="icon">🥭</div>
+          <div class="prop-title">Fresh & authentic</div>
+          <p>We partner directly with local makers to keep every bite legit.</p>
+        </div>
+        <div class="prop-card">
+          <div class="icon">🛡️</div>
+          <div class="prop-title">Safe & easy</div>
+          <p>Secure checkout, live order updates, and friendly support.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="category-teaser">
+      <div class="container teaser-inner">
+        <div class="teaser-copy">
+          <p class="eyebrow">Best for pasalubong</p>
+          <h3>Kakanin and seafood, ready to go</h3>
+          <p class="muted">
+            Rice cakes, dried fish, smoked seafood, and snacks packed right so they arrive ready to enjoy.
+          </p>
+          <ul class="teaser-list">
+            <li>
+              <span class="check">✓</span>
+              <div>Chilled liners for seafood and coconut-based kakanin</div>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <div>Partnered with trusted hometown kitchens and fishers</div>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <div>Live updates from checkout to delivery</div>
+            </li>
+          </ul>
+        </div>
+        <div class="teaser-cta">
+          <div class="cta-card">
+            <div class="cta-meta">
+              <span class="dot amber"></span>
+              <span>Trending this week</span>
+            </div>
+            <h4>Fresh picks, ready to ship.</h4>
+            <p class="muted">Browse the latest arrivals and best sellers.</p>
+            <a href="#products" class="btn primary full">Shop now</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile bottom nav -->
+    <nav class="mobile-bottom-nav">
+      <a href="home.html" class="mob-nav-item active" aria-label="Home">
+        <span class="mob-icon">🏠</span>
+        <span class="mob-label">Home</span>
+      </a>
+      <a href="profile.html" class="mob-nav-item" aria-label="Profile">
+        <span class="mob-icon">👤</span>
+        <span class="mob-label">Profile</span>
+      </a>
+    </nav>
+
     <section class="products-section" id="products">
       <div class="container">
         <div class="products-header">
